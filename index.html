@@ -79,12 +79,15 @@ p{margin:0}
 [data-skin="sand"] .frame{border-radius:40px 40px 40px 40px;box-shadow:var(--shadow)}
 
 /* statement */
-.state{background:var(--band);color:var(--on-band)}
-.state p{font-size:clamp(2rem,1.1rem + 4vw,4.4rem);font-weight:700;line-height:1.25;text-align:center;padding-block:clamp(90px,13vw,170px)}
-.state .w{color:var(--dim);transition:color .3s}
-.state .w.on{color:var(--on-band)}
-.state .w.g.on{color:var(--hi)}
-[data-skin="sand"] .state .w.g.on{color:#F2B27E}
+.state{background:var(--band);color:var(--on-band);min-height:min(80vh,720px);display:grid;place-items:center}
+.state .inner{width:100%}
+.state p{font-size:clamp(2rem,1.1rem + 4vw,4.4rem);font-weight:700;line-height:1.35;text-align:center;margin-inline:auto;max-width:22ch;padding-block:clamp(70px,10vw,120px)}
+.state .s1{display:block}
+.state .g{color:var(--hi)}
+[data-skin="sand"] .state .g{color:#F2B27E}
+.state .ul{position:relative;display:inline-block}
+.state .uline{position:absolute;inset:auto 0 -.04em 0;width:100%;height:.18em;overflow:visible;pointer-events:none}
+.state .uline path{fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round}
 [data-skin="pro"] .state{background:#000;border-block:1px solid var(--line)}
 
 /* numbers */
@@ -217,7 +220,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
   </div>
 </header>
 
-<section class="state band" style="margin-top:clamp(70px,10vw,130px)"><div class="inner"><p id="st">لا نبني مبنى ثم نبحث له عن محتوى. نبني الرؤية أولاً، ثم المكان.</p></div></section>
+<section class="state band" style="margin-top:clamp(70px,10vw,130px)"><div class="inner"><p id="st"><span class="s1">لا نبني مبنى ثم نبحث له عن محتوى.</span> <span class="s1">نبني <span class="ul g">الرؤية<svg class="uline" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path d="M2 6 Q50 1 98 6"/></svg></span> أولاً، ثم <span class="ul g">المكان<svg class="uline" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path d="M2 6 Q50 1 98 6"/></svg></span>.</span></p></div></section>
 
 <section class="sec band c">
   <div class="inner">
@@ -277,8 +280,10 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
 </div>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/DrawSVGPlugin.min.js"></script>
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
 <script>
 (function(){
@@ -342,14 +347,19 @@ const C=[['القيادات المؤسسية والمجتمعية',['غازي ع
 const acc=$('#acc');
 C.forEach(c=>acc.insertAdjacentHTML('beforeend',`<details><summary>${c[0]}<span class="cnt">${ar(c[1].length)}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></summary><ul>${c[1].map(n=>`<li>${n}</li>`).join('')}</ul></details>`));
 
-/* statement */
-const st=$('#st');st.innerHTML=st.textContent.split(' ').map(w=>`<span class="w${/الرؤية|المكان/.test(w)?' g':''}">${w}</span>`).join(' ');
-const ws=$$('#st .w');
+/* statement: curtain lines + gold underline (Arabic split by lines only) */
 if(G){
   gsap.from('.hero .inner>*',{y:30,opacity:0,duration:1.2,ease:'power3.out',stagger:.1});
-  ScrollTrigger.create({trigger:'.state',start:'top 75%',end:'bottom 60%',scrub:true,onUpdate:s=>{const n=Math.round(s.progress*ws.length*1.15);ws.forEach((w,i)=>w.classList.toggle('on',i<n))}});
+  if(window.SplitText)gsap.registerPlugin(SplitText);
+  if(window.DrawSVGPlugin)gsap.registerPlugin(DrawSVGPlugin);
+  const playSt=()=>{
+    if(window.SplitText){const sp=SplitText.create('#st',{type:'lines',mask:'lines',ignore:'.uline'});
+      gsap.from(sp.lines,{yPercent:110,duration:1.1,ease:'power4.out',stagger:.15,onComplete:()=>sp.revert()})}
+    if(window.DrawSVGPlugin)gsap.fromTo('#st .uline path',{drawSVG:'0%'},{drawSVG:'100%',duration:.8,ease:'power2.inOut',stagger:.25,delay:.9});
+  };
+  ScrollTrigger.create({trigger:'.state',start:'top 65%',once:true,onEnter:()=>document.fonts.ready.then(playSt)});
   $$('.n').forEach(n=>{const o={v:0},to=+n.dataset.to;gsap.to(o,{v:to,duration:1.6,ease:'power3.out',scrollTrigger:{trigger:n,start:'top 88%',once:true},onUpdate:()=>n.textContent=ar(Math.round(o.v))})});
-}else ws.forEach(w=>w.classList.add('on'));
+}
 })();
 </script>
 
