@@ -316,6 +316,7 @@ p{margin:0}
 .intro .inv[hidden],.intro .invlock[hidden],.intro .lbioh[hidden],.intro .lbio[hidden]{display:none}
 .inv .invt{font-weight:700;margin:0;color:var(--fg)}
 .inv label{display:flex;flex-direction:column;gap:6px;font-size:.86rem;color:var(--fg-2);font-weight:500}
+.inv input[type=date],.inv input[type=datetime-local]{direction:rtl;text-align:right;min-height:46px}
 .inv select,.inv input{font:inherit;font-size:1rem;color:var(--fg);background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
 .inv select:focus,.inv input:focus{outline:2px solid var(--acc);border-color:transparent}
 .inv .invg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -326,6 +327,8 @@ p{margin:0}
 .inv .pbtn[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
 .inv .invh{margin:0;color:var(--fg-3);font-size:.85rem}
 .inv .invx{color:var(--fg-3);font-size:.8rem;font-weight:400}
+.inv .invd{color:#8A4B22;font-size:.88rem;font-weight:600;min-height:1.3em}
+[data-skin="pro"] .inv .invd{color:#C98552}
 .intro.adm .lspon,.intro.adm .lco,.intro.adm .ldate,.intro.adm .lwhen,.intro.adm .lwhere{cursor:pointer;border-bottom:1px dashed currentColor}
 .intro.adm .lset,.intro .lset{color:var(--hi);font-weight:700;border-bottom:0}
 .intro .lfill{color:var(--hi);font-weight:700}
@@ -665,8 +668,8 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
   <label class="invw">الجهة التي وافقت على تبنّي المشروع ورعايته<input id="invSpon" placeholder="مثال: مركز تمكين شباب النعيم"><span class="invx">تُكتب في: «وقد حظيت فكرة المشروع بموافقة (…) على تبنيها ورعايتها»</span></label>
   <div class="invg">
     <label class="invw">بالتنسيق مع<input id="invCo"></label>
-    <label>التاريخ<input id="invDate"></label>
-    <label>موعد المؤتمر<input id="invWhen" placeholder="اليوم والساعة"></label>
+    <label>التاريخ<input id="invDate" type="date"><span class="invx invd" id="invDateTx"></span></label>
+    <label>موعد المؤتمر<input id="invWhen" type="datetime-local"><span class="invx invd" id="invWhenTx"></span></label>
     <label class="invw">المكان<input id="invWhere"></label>
   </div>
   <div class="invb"><button type="button" class="pbtn" id="invPdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>حفظ الدعوة PDF</button><p class="invh" id="invHint">في نافذة الطباعة اختر «حفظ كـ PDF».</p></div>
@@ -1028,7 +1031,10 @@ if(G){
 (function(){const art=$('#x4'),sel=$('#invName');if(!art||!sel)return;
  const F={spon:$('#invSpon'),co:$('#invCo'),date:$('#invDate'),when:$('#invWhen'),where:$('#invWhere')};
  try{const v=JSON.parse(localStorage.getItem('naeem-invite')||'{}');Object.keys(F).forEach(k=>{if(v[k])F[k].value=v[k]})}catch(e){}
- if(!F.date.value)F.date.value=new Date().toLocaleDateString('ar-BH',{year:'numeric',month:'long',day:'numeric'});
+ const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+ if(!/^\d{4}-\d\d-\d\d$/.test(F.date.value))F.date.value=iso(new Date());
+ if(F.when.value&&!/^\d{4}-\d\d-\d\dT\d\d:\d\d/.test(F.when.value))F.when.value='';
+ const fmtD=v=>{const m=v.match(/^(\d{4})-(\d\d)-(\d\d)(?:T(\d\d):(\d\d))?/);if(!m)return v;const d=new Date(+m[1],m[2]-1,+m[3],+(m[4]||0),+(m[5]||0));let t=d.toLocaleDateString('ar-BH',{weekday:'long',year:'numeric',month:'long',day:'numeric'});if(m[4])t+=' – الساعة '+d.toLocaleTimeString('ar-BH',{hour:'numeric',minute:'2-digit'});return t};
  const save=()=>{try{const v={};Object.keys(F).forEach(k=>v[k]=F[k].value);localStorage.setItem('naeem-invite',JSON.stringify(v))}catch(e){}};
  function fill(){const cur=sel.value;sel.innerHTML='<option value="">اختر من قائمة الشخصيات…</option>'+ALL.map(g=>`<optgroup label="${esc(g.c)}">${g.p.map(p=>`<option value="${esc(p.key)}"${p.key===cur?' selected':''}>${esc(p.n)}</option>`).join('')}</optgroup>`).join('')}
  const person=()=>{const f=sel.value&&findP(sel.value);return f?f.p:null};
@@ -1039,11 +1045,11 @@ if(G){
   art.querySelector('.lsal').innerHTML=p?esc(salut(p)).replace(esc(p.n),`<span class="lfill">${esc(p.n)}</span>`):esc(salut(null));
   const bio=art.querySelector('.lbio'),bh=art.querySelector('.lbioh');bio.textContent=p&&p.bio||'';bio.hidden=!(p&&p.bio);bh.hidden=!!p;
   art.querySelector('.lspon').textContent=val('spon','............');[['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).classList.toggle('lset',!!F[k].value.trim()));art.querySelector('.lco').textContent=val('co','...........................');
-  art.querySelector('.ldate').textContent=val('date',dots);art.querySelector('.lwhen').textContent=val('when',dots);art.querySelector('.lwhere').textContent=val('where',dots);
+  art.querySelector('.ldate').textContent=F.date.value?fmtD(F.date.value):dots;art.querySelector('.lwhen').textContent=F.when.value?fmtD(F.when.value):dots;$('#invDateTx').textContent=F.date.value?fmtD(F.date.value):'';$('#invWhenTx').textContent=F.when.value?fmtD(F.when.value):'';art.querySelector('.lwhere').textContent=val('where',dots);
   $('#invPdf').setAttribute('aria-disabled',String(!p))}
  [['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).addEventListener('click',()=>{if(!unlocked())return;F[k].scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>F[k].focus({preventScroll:true}),350)}));
  sel.addEventListener('focus',fill);sel.addEventListener('pointerdown',fill);sel.addEventListener('change',sync);
- Object.values(F).forEach(i=>i.addEventListener('input',()=>{sync();save()}));
+ Object.values(F).forEach(i=>{i.addEventListener('input',()=>{sync();save()});i.addEventListener('change',()=>{sync();save()})});
  fill();sync();
  function gate(){const on=unlocked();art.classList.toggle('adm',on);$('#inv').hidden=!on;$('#invLock').hidden=on;if(!on&&sel.value){sel.value='';sync()}}
  document.addEventListener('naeem-admin',gate);gate();
