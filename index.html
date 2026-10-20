@@ -335,6 +335,13 @@ p{margin:0}
 .inv .dcal svg{width:20px;height:20px}
 .inv .dday{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-weight:700;color:#8A4B22;pointer-events:none;font-size:.98rem}
 [data-skin="pro"] .inv .dday,[data-skin="pro"] .inv .dcal{color:#C98552}
+.inv .dwrap #invTime{padding-right:50px;padding-left:96px;direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+.inv .dico{cursor:default}
+.inv .dico:hover{background:none}
+.inv .dap{all:unset;cursor:pointer;pointer-events:auto;padding:4px 8px;border-radius:8px;transform:translateY(-50%);position:absolute;left:8px;top:50%;font-weight:700;color:#8A4B22}
+.inv .dap:hover{background:color-mix(in srgb,#8A4B22 10%,transparent)}
+.inv .dap:focus-visible{outline:2px solid var(--acc)}
+.inv .dap[hidden]{display:none}
 .inv .dnat{position:absolute;right:6px;bottom:0;width:36px!important;height:1px;padding:0!important;border:0!important;opacity:0;pointer-events:none}
 .inv .invt2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .inv .invt2 .invd{grid-column:1/-1;margin-top:-6px}
@@ -680,7 +687,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
   <div class="invg">
     <label class="invw">بالتنسيق مع<input id="invCo"></label>
     <label class="invw">موعد الاجتماع<span class="dwrap"><input id="invWhenTxt" inputmode="numeric" placeholder="30.10.2026" maxlength="10" autocomplete="off"><button type="button" class="dcal" id="invCal" aria-label="اختيار من التقويم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button><input id="invWhen" type="date" tabindex="-1" aria-hidden="true" class="dnat"><span class="dday" id="invWhenTx" aria-live="polite"></span></span></label>
-    <div class="invw invt2"><label>الوقت من<input id="invTf" type="time"></label><label>إلى<input id="invTt" type="time"></label><span class="invx invd" id="invTimeTx"></span></div>
+    <label class="invw">الوقت<span class="dwrap"><input id="invTime" inputmode="numeric" placeholder="10.30 - 11.30" maxlength="15" autocomplete="off"><span class="dcal dico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><button type="button" class="dday dap" id="invAp" aria-label="تبديل صباحاً أو مساءً">صباحاً</button><input id="invApV" type="hidden" value=""></span></label>
     <label class="invw">المكان<input id="invWhere"></label>
   </div>
   <div class="invb"><button type="button" class="pbtn" id="invPdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>حفظ الدعوة PDF</button><p class="invh" id="invHint">في نافذة الطباعة اختر «حفظ كـ PDF».</p></div>
@@ -1040,14 +1047,15 @@ if(G){
 
 /* invitation letter: pick a person, save as PDF */
 (function(){const art=$('#x4'),sel=$('#invName');if(!art||!sel)return;
- const F={spon:$('#invSpon'),co:$('#invCo'),when:$('#invWhen'),tf:$('#invTf'),tt:$('#invTt'),where:$('#invWhere')};
+ const F={spon:$('#invSpon'),co:$('#invCo'),when:$('#invWhen'),time:$('#invTime'),ap:$('#invApV'),where:$('#invWhere')};
  try{const v=JSON.parse(localStorage.getItem('naeem-invite')||'{}');Object.keys(F).forEach(k=>{if(v[k])F[k].value=v[k]})}catch(e){}
  const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   if(F.when.value){const mm=F.when.value.match(/^\d{4}-\d\d-\d\d/);F.when.value=mm?mm[0]:''}
  const DAYS=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
  const fmtD=(v,day)=>{const m=v.match(/^(\d{4})-(\d\d)-(\d\d)/);if(!m)return v;const ds=`${m[3]}.${m[2]}.${m[1]}`;return day?`${DAYS[new Date(+m[1],m[2]-1,+m[3]).getDay()]} ${ds}`:ds};
- const t12=v=>{const m=v.match(/^(\d\d):(\d\d)/);if(!m)return null;const h=+m[1];return{t:`${h%12||12}.${m[2]}`,ap:h<12?'صباحاً':'مساءً'}};
- const fmtT=()=>{const a=t12(F.tf.value),b=t12(F.tt.value);if(!a)return'';if(!b)return `${a.t} ${a.ap}`;return a.ap===b.ap?`${a.t} إلى ${b.t} ${b.ap}`:`${a.t} ${a.ap} إلى ${b.t} ${b.ap}`};
+ const parseT=()=>{const m=F.time.value.match(/(\d{1,2})[.:](\d{2})(?:\s*(?:-|–|إلى)\s*(\d{1,2})[.:](\d{2}))?/);if(!m)return null;return{a:`${+m[1]}.${m[2]}`,b:m[3]?`${+m[3]}.${m[4]}`:null,h:+m[1]}};
+ const apNow=()=>{if(F.ap.value)return F.ap.value;const t=parseT();if(!t)return'صباحاً';return(t.h>=7&&t.h<=11)?'صباحاً':'مساءً'};
+ const fmtT=()=>{const t=parseT();if(!t)return F.time.value.trim();return t.b?`${t.a} إلى ${t.b} ${apNow()}`:`${t.a} ${apNow()}`};
  const save=()=>{try{const v={};Object.keys(F).forEach(k=>v[k]=F[k].value);localStorage.setItem('naeem-invite',JSON.stringify(v))}catch(e){}};
  function fill(){const cur=sel.value;sel.innerHTML='<option value="">اختر من قائمة الشخصيات…</option>'+ALL.map(g=>`<optgroup label="${esc(g.c)}">${g.p.map(p=>`<option value="${esc(p.key)}"${p.key===cur?' selected':''}>${esc(p.n)}</option>`).join('')}</optgroup>`).join('')}
  const person=()=>{const f=sel.value&&findP(sel.value);return f?f.p:null};
@@ -1057,10 +1065,10 @@ if(G){
  function sync(){const p=person();
   art.querySelector('.lsal').innerHTML=p?esc(salut(p)).replace(esc(p.n),`<span class="lfill">${esc(p.n)}</span>`):esc(salut(null));
   const bio=art.querySelector('.lbio'),bh=art.querySelector('.lbioh');bio.textContent=p&&p.bio||'';bio.hidden=!(p&&p.bio);bh.hidden=!!p;
-  art.querySelector('.lspon').textContent=val('spon','............');[['.lspon','spon'],['.lco','co'],['.lwhen','when'],['.ltime','tf'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).classList.toggle('lset',!!F[k].value.trim()));art.querySelector('.lco').textContent=val('co','...........................');
-  art.querySelector('.lwhen').textContent=F.when.value?fmtD(F.when.value,1):dots;$('#invWhenTx').textContent=F.when.value?fmtD(F.when.value,1).split(' ')[0]:'';const tm=fmtT();art.querySelector('.ltime').textContent=tm||dots;$('#invTimeTx').textContent=tm;art.querySelector('.lwhere').textContent=val('where',dots);
+  art.querySelector('.lspon').textContent=val('spon','............');[['.lspon','spon'],['.lco','co'],['.lwhen','when'],['.ltime','time'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).classList.toggle('lset',!!F[k].value.trim()));art.querySelector('.lco').textContent=val('co','...........................');
+  art.querySelector('.lwhen').textContent=F.when.value?fmtD(F.when.value,1):dots;$('#invWhenTx').textContent=F.when.value?fmtD(F.when.value,1).split(' ')[0]:'';const tm=fmtT();art.querySelector('.ltime').textContent=tm||dots;$('#invAp').textContent=apNow();$('#invAp').hidden=!F.time.value.trim();art.querySelector('.lwhere').textContent=val('where',dots);
   $('#invPdf').setAttribute('aria-disabled',String(!p))}
- [['.lspon','spon'],['.lco','co'],['.lwhen','when'],['.ltime','tf'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).addEventListener('click',()=>{if(!unlocked())return;if(k==='when'){wt.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>wt.focus({preventScroll:true}),350);return}F[k].scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>F[k].focus({preventScroll:true}),350)}));
+ [['.lspon','spon'],['.lco','co'],['.lwhen','when'],['.ltime','time'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).addEventListener('click',()=>{if(!unlocked())return;if(k==='when'){wt.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>wt.focus({preventScroll:true}),350);return}F[k].scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>F[k].focus({preventScroll:true}),350)}));
  sel.addEventListener('focus',fill);sel.addEventListener('pointerdown',fill);sel.addEventListener('change',sync);
  Object.values(F).forEach(i=>{i.addEventListener('input',()=>{sync();save()});i.addEventListener('change',()=>{sync();save()})});
 
@@ -1070,6 +1078,9 @@ if(G){
   const m=wt.value.match(/^(\d\d)\.(\d\d)\.(\d{4})$/);const ok=m&&+m[2]>=1&&+m[2]<=12&&+m[1]>=1&&+m[1]<=new Date(+m[3],+m[2],0).getDate();F.when.value=ok?`${m[3]}-${m[2]}-${m[1]}`:'';sync();save()});
  $('#invCal').addEventListener('click',()=>{try{F.when.showPicker()}catch(e){F.when.style.pointerEvents='auto';F.when.focus();F.when.click()}});
  F.when.addEventListener('change',()=>{wt.value=toTxt(F.when.value)});
+
+ F.time.addEventListener('input',e=>{const v=F.time.value.replace(/[٠-٩]/g,c=>'٠١٢٣٤٥٦٧٨٩'.indexOf(c));if(/^[\d.\s-]*$/.test(v)&&!(e.inputType||'').startsWith('delete')){const d=v.replace(/\D/g,'').slice(0,8);F.time.value=d.length>6?`${d.slice(0,2)}.${d.slice(2,4)} - ${d.slice(4,6)}.${d.slice(6)}`:d.length>4?`${d.slice(0,2)}.${d.slice(2,4)} - ${d.slice(4)}`:d.length>2?`${d.slice(0,2)}.${d.slice(2)}`:d}});
+ $('#invAp').addEventListener('click',()=>{F.ap.value=apNow()==='صباحاً'?'مساءً':'صباحاً';sync();save()});
  fill();sync();
  function gate(){const on=unlocked();art.classList.toggle('adm',on);$('#inv').hidden=!on;$('#invLock').hidden=on;if(!on&&sel.value){sel.value='';sync()}}
  document.addEventListener('naeem-admin',gate);gate();
@@ -1079,7 +1090,7 @@ if(G){
   [...art.children].forEach(el=>{
    if(el.matches('.ix,.ibism,.ik,h2,.inv,.iback'))return;
    if(el.matches('.lbioh'))return;
-   const fk=[['.lspon','spon'],['.lco','co'],['.lwhen','when'],['.ltime','tf'],['.lwhere','where']].find(([c])=>el.querySelector(c));if(fk&&!F[fk[1]].value.trim())return;
+   const fk=[['.lspon','spon'],['.lco','co'],['.lwhen','when'],['.ltime','time'],['.lwhere','where']].find(([c])=>el.querySelector(c));if(fk&&!F[fk[1]].value.trim())return;
    if(el.matches('.lbio')){if(p.bio)out.push(`<p>${esc(p.bio)}</p>`);return}
    if(el.matches('.lsal')){out.push(`<p class="sal">${esc(salut(p))}</p>`);return}
    if(el.matches('.isig')){if(!skip){out.push('<div class="sig">');skip=true}out.push(`<p>${esc(el.textContent)}</p>`);return}
