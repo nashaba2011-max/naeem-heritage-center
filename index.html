@@ -83,6 +83,13 @@ p{margin:0}
 .intro .iq{margin:4px 0 16px;padding:0 1.2em 0 0;display:grid;gap:4px;font-weight:600}
 .intro .iq li::marker{color:var(--hi)}
 .intro .iquote{font-weight:700;font-size:1.15rem;color:var(--hi);margin-top:18px}
+.hbtn{all:unset;cursor:pointer;display:inline-block;text-align:center;line-height:1.15}
+.hbtn:focus-visible{outline:2px solid var(--acc);outline-offset:6px;border-radius:8px}
+.hbtn .hhint{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:14px;font-size:1rem;font-weight:500;color:var(--acc)}
+.hbtn .hhint svg{width:16px;height:16px;transition:transform .45s cubic-bezier(.25,.1,.25,1)}
+.hbtn[aria-expanded="true"] .hhint svg{transform:rotate(180deg)}
+.hbtn:hover .hhint{text-decoration:underline;text-underline-offset:4px}
+.intro .il{font-weight:400}
 .intro .iback{display:flex;justify-content:center;margin-top:30px;padding-top:24px;border-top:1px solid var(--line)}
 .intro .iback button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:11px 26px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-weight:500}
 .intro .iback button:hover{filter:brightness(1.1)}
@@ -332,7 +339,21 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
 
 <section class="sec band c">
   <div class="inner">
-    <h2 class="h2">رؤية المشروع.<br>ذاكرة حيّة بخطى واضحة.</h2>
+    <h2 class="h2"><button type="button" class="hbtn" id="p5Btn" aria-expanded="false" aria-controls="p5Box">رؤية المشروع.<br>ذاكرة حيّة بخطى واضحة.<span class="hhint">اضغط لقراءة رؤية المشروع <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></button></h2>
+    <div class="introbox" id="p5Box"><div class="introin">
+      <article class="intro" id="p5" aria-label="رؤية المشروع">
+        <button type="button" class="ix" id="p5Close" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        <p class="ik">رؤية المشروع</p>
+        <h2>مشروع مركز النعيم الثقافي والتراثي</h2>
+        <p>يقوم إعداد مشروع مركز النعيم الثقافي والتراثي على مبدأ الشراكة المجتمعية في صناعة المشروع، بحيث لا يقتصر التخطيط على رؤية إدارية أو هندسية مسبقة، وإنما يتم إشراك مختلف أطياف المجتمع وأصحاب الخبرات والمهتمين بتاريخ النعيم وتراثها وفنونها في بلورة هوية المركز ومكوناته وبرامجه.</p>
+        <p>وتنطلق هذه المنهجية من أهمية الاستماع إلى أصحاب الاختصاص والممارسين أنفسهم؛ فالقلاليف وأصحاب الخبرة البحرية أقدر على رسم تصور قسم التراث البحري، والمصورون أقدر على تحديد احتياجات فضاء التصوير والأرشفة البصرية، والفنانون التشكيليون أقدر على تحديد احتياجات المعارض وورش العمل، وكذلك بقية التخصصات والاهتمامات الثقافية والاجتماعية.</p>
+        <p>وبذلك يصبح المشروع نتاجاً لرؤية مجتمعية مشتركة، تجمع بين ذاكرة الماضي واحتياجات الحاضر وطموحات المستقبل.</p>
+        <h3>المرحلة الأولى: تشكيل فريق إدارة المشروع</h3>
+        <p>الإجراءات المقترحة لتشكيل فريق عمل واضح الهيكل وخطة زمنية أولية لإدارة المشروع.</p>
+        <ul class="iq il"><li>تشكيل فريق عمل للمشروع تحت مظلة إحدى المؤسسات ذات العلاقة في النعيم.</li><li>تحديد منسق عام للمشروع.</li><li>توزيع العمل على مجموعات أو محاور تخصصية.</li><li>إعداد جدول زمني لمراحل المشروع.</li><li>تحديد آلية للتوثيق وحفظ نتائج الاجتماعات والمقابلات.</li><li>إنشاء قاعدة بيانات بأسماء الشخصيات والكفاءات والمؤسسات ذات العلاقة بالمشروع.</li></ul>
+        <div class="iback"><button type="button" id="p5Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>رجوع</button></div>
+      </article>
+    </div></div>
     <div class="row4">
       <div><div class="n" data-to="9">٩</div><p class="l">مراحل</p></div>
       <div><div class="n" data-to="8">٨</div><p class="l">أقسام</p></div>
@@ -494,6 +515,14 @@ if(G){
  $('#introClose').addEventListener('click',()=>{setOpen(false);btn.focus()});
  $('#introBack').addEventListener('click',()=>{const t=btn.closest('.hero')||btn;if(lenis)lenis.scrollTo(t,{offset:-48,duration:1.1});else t.scrollIntoView({behavior:reduce?'auto':'smooth'});setTimeout(()=>{setOpen(false);btn.focus({preventScroll:true})},reduce?0:700)});
  art.setAttribute('data-lenis-prevent','');
+})();
+
+/* project-vision panel (page 5) */
+(function(){const btn=$('#p5Btn'),box=$('#p5Box');
+ function setOpen(o){box.classList.toggle('open',o);btn.setAttribute('aria-expanded',String(o));if(window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),750)}
+ btn.addEventListener('click',()=>setOpen(!box.classList.contains('open')));
+ $('#p5Close').addEventListener('click',()=>{setOpen(false);btn.focus()});
+ $('#p5Back').addEventListener('click',()=>{if(lenis)lenis.scrollTo(btn,{offset:-80,duration:1.1});else btn.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});setTimeout(()=>{setOpen(false);btn.focus({preventScroll:true})},reduce?0:700)});
 })();
 })();
 </script>
