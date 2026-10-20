@@ -90,6 +90,9 @@ p{margin:0}
 .hbtn[aria-expanded="true"] .hhint svg{transform:rotate(180deg)}
 .hbtn:hover .hhint{text-decoration:underline;text-underline-offset:4px}
 .intro .il{font-weight:400}
+.intro .docl{list-style:arabic-indic;margin:10px 0 0;padding:0 1.4em 0 0;columns:2 220px;column-gap:34px;font-weight:600}
+.intro .docl li{break-inside:avoid;padding:4px 0}
+.intro .docl li::marker{color:var(--hi)}
 .intro .iback{display:flex;justify-content:center;margin-top:30px;padding-top:24px;border-top:1px solid var(--line)}
 .intro .iback button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:11px 26px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-weight:500}
 .intro .iback button:hover{filter:brightness(1.1)}
@@ -407,6 +410,18 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
   <div class="inner">
     <h2 class="h2">ثمانية أقسام. قصة واحدة.</h2>
     <p class="sub">كل قسم يرويه أهل اختصاصه.</p>
+    <div class="cta" style="margin-top:20px"><button type="button" class="pill ghost" id="docBtn" aria-expanded="false" aria-controls="docBox">إعداد الوثيقة الاستراتيجية للمشروع</button></div>
+    <div class="introbox" id="docBox"><div class="introin">
+      <article class="intro" id="docP" aria-label="إعداد الوثيقة الاستراتيجية للمشروع">
+        <button type="button" class="ix" id="docClose" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        <p class="ik">المرحلة السادسة</p>
+        <h2>إعداد الوثيقة الاستراتيجية للمشروع</h2>
+        <p>وثيقة تأسيسية متكاملة لمشروع مركز النعيم الثقافي والتراثي.</p>
+        <p>بعد الانتهاء من المشاورات والدراسات، يتم جمع المخرجات في وثيقة استراتيجية موحدة تتضمن:</p>
+        <ol class="docl"><li>رؤية المركز.</li><li>رسالته.</li><li>أهدافه.</li><li>هويته الثقافية.</li><li>الأقسام المقترحة.</li><li>احتياجات كل قسم.</li><li>البرامج والفعاليات.</li><li>الفئات المستهدفة.</li><li>الشراكات المحتملة.</li><li>الاحتياجات المكانية.</li><li>التصور المالي الأولي.</li><li>مراحل التنفيذ.</li><li>مؤشرات النجاح والاستدامة.</li></ol>
+        <div class="iback"><button type="button" id="docBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>رجوع</button></div>
+      </article>
+    </div></div>
     <div class="grid8" id="grid8"></div>
   </div>
 </section>
@@ -601,6 +616,14 @@ if(G){
  btn.addEventListener('click',()=>setOpen(!box.classList.contains('open')));
  $('#p5Close').addEventListener('click',()=>{setOpen(false);btn.focus()});
  $('#p5Back').addEventListener('click',()=>{if(lenis)lenis.scrollTo(btn,{offset:-80,duration:1.1});else btn.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});setTimeout(()=>{setOpen(false);btn.focus({preventScroll:true})},reduce?0:700)});
+})();
+
+/* strategic document panel (page 12) */
+(function(){const btn=$('#docBtn'),box=$('#docBox');
+ function setOpen(o){box.classList.toggle('open',o);btn.setAttribute('aria-expanded',String(o));if(window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),750)}
+ btn.addEventListener('click',()=>setOpen(!box.classList.contains('open')));
+ $('#docClose').addEventListener('click',()=>{setOpen(false);btn.focus()});
+ $('#docBack').addEventListener('click',()=>{if(lenis)lenis.scrollTo(btn,{offset:-120,duration:1.1});else btn.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});setTimeout(()=>{setOpen(false);btn.focus({preventScroll:true})},reduce?0:700)});
 })();
 })();
 </script>
