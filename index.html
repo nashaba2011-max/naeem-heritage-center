@@ -669,7 +669,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
   <div class="invg">
     <label class="invw">بالتنسيق مع<input id="invCo"></label>
     <label>التاريخ<input id="invDate" type="date"><span class="invx invd" id="invDateTx"></span></label>
-    <label>موعد المؤتمر<input id="invWhen" type="datetime-local"><span class="invx invd" id="invWhenTx"></span></label>
+    <label>موعد الاجتماع<input id="invWhen" type="datetime-local"><span class="invx invd" id="invWhenTx"></span></label>
     <label class="invw">المكان<input id="invWhere"></label>
   </div>
   <div class="invb"><button type="button" class="pbtn" id="invPdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>حفظ الدعوة PDF</button><p class="invh" id="invHint">في نافذة الطباعة اختر «حفظ كـ PDF».</p></div>
@@ -724,7 +724,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
 <p class="isig">عمار أحمد النشابة</p>
 <p class="isig">بالتنسيق مع (<span class="lco">...........................</span>)</p>
 <p class="isig">التاريخ: <span class="ldate">............................</span></p>
-<p class="isig">موعد المؤتمر: <span class="lwhen">............................</span></p>
+<p class="isig">موعد الاجتماع: <span class="lwhen">............................</span></p>
 <p class="isig">المكان: <span class="lwhere">............................</span></p>
 <div class="iback"><button type="button" class="xback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>رجوع</button></div></article>
     </div></div>
@@ -1034,7 +1034,7 @@ if(G){
  const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
  if(!/^\d{4}-\d\d-\d\d$/.test(F.date.value))F.date.value=iso(new Date());
  if(F.when.value&&!/^\d{4}-\d\d-\d\dT\d\d:\d\d/.test(F.when.value))F.when.value='';
- const fmtD=v=>{const m=v.match(/^(\d{4})-(\d\d)-(\d\d)(?:T(\d\d):(\d\d))?/);if(!m)return v;const d=new Date(+m[1],m[2]-1,+m[3],+(m[4]||0),+(m[5]||0));let t=d.toLocaleDateString('ar-BH',{weekday:'long',year:'numeric',month:'long',day:'numeric'});if(m[4])t+=' – الساعة '+d.toLocaleTimeString('ar-BH',{hour:'numeric',minute:'2-digit'});return t};
+ const fmtD=v=>{const m=v.match(/^(\d{4})-(\d\d)-(\d\d)(?:T(\d\d):(\d\d))?/);if(!m)return v;const d=new Date(+m[1],m[2]-1,+m[3]);const ds=`${+m[3]}.${+m[2]}.${m[1]}`.replace(/^(\d)\./,'0$1.').replace(/\.(\d)\./,'.0$1.');if(!m[4])return ds;const DAYS=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];let h=+m[4];const ap=h<12?'صباحاً':'مساءً';h=h%12||12;return `${DAYS[d.getDay()]} ${ds} – الساعة ${h}:${m[5]} ${ap}`};
  const save=()=>{try{const v={};Object.keys(F).forEach(k=>v[k]=F[k].value);localStorage.setItem('naeem-invite',JSON.stringify(v))}catch(e){}};
  function fill(){const cur=sel.value;sel.innerHTML='<option value="">اختر من قائمة الشخصيات…</option>'+ALL.map(g=>`<optgroup label="${esc(g.c)}">${g.p.map(p=>`<option value="${esc(p.key)}"${p.key===cur?' selected':''}>${esc(p.n)}</option>`).join('')}</optgroup>`).join('')}
  const person=()=>{const f=sel.value&&findP(sel.value);return f?f.p:null};
