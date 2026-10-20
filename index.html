@@ -134,10 +134,17 @@ p{margin:0}
 [data-skin="pro"] .state .inner{background:#0B0B0C;border:1px solid var(--line)}
 
 /* numbers */
-.row4{margin-top:clamp(40px,6vw,70px);display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.r4h{margin-top:clamp(48px,7vw,80px);font-size:clamp(1.5rem,1.1rem + 1.4vw,2.2rem);font-weight:700;text-align:center}
+.row4{margin-top:clamp(22px,3vw,34px);display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.row4>a{color:inherit;text-decoration:none;display:block;border-radius:22px;padding:18px 8px;transition:background .3s,transform .35s cubic-bezier(.2,.8,.2,1)}
+.row4>a:hover{background:var(--bg-2);transform:translateY(-3px)}
+.row4>a:hover .l{color:var(--acc)}
+.row4>a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.row4 .l{transition:color .3s}
 .n{font-size:clamp(3rem,2rem + 4vw,5.4rem);font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
 [data-skin="pro"] .n{color:var(--hi)}
-[data-skin="sand"] .row4>div{background:var(--tile);border-radius:28px;padding:30px 16px;box-shadow:var(--shadow)}
+[data-skin="sand"] .row4>a{background:var(--tile);border-radius:28px;padding:30px 16px;box-shadow:var(--shadow)}
+[data-skin="sand"] .row4>a:hover{background:var(--tile)}
 [data-skin="sand"] .n{color:var(--acc)}
 .l{margin-top:10px;color:var(--fg-2)}
 
@@ -416,7 +423,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
 .sw button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 
 @media (max-width:820px){
-  .row4{grid-template-columns:repeat(2,1fr);row-gap:20px}
+  .row4{grid-template-columns:repeat(3,1fr);gap:6px}
   .grid8{grid-template-columns:repeat(2,1fr)}
   .frame{aspect-ratio:4/3}
   [data-skin="pro"] .frame{aspect-ratio:4/3}
@@ -505,11 +512,11 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
         <div class="iback"><button type="button" id="p5Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>رجوع</button></div>
       </article>
     </div></div>
+    <h2 class="r4h">أقسام المشروع</h2>
     <div class="row4">
-      <div><div class="n" data-to="9">٩</div><p class="l">مراحل</p></div>
-      <div><div class="n" data-to="8">٨</div><p class="l">أقسام</p></div>
-      <div><div class="n" id="npeople" data-to="43">٤٣</div><p class="l">شخصية مؤسِّسة</p></div>
-      <div><div class="n" data-to="9">٩</div><p class="l">أشهر للدراسة</p></div>
+      <a href="#phases"><div class="n" data-to="9">٩</div><p class="l">مراحل</p></a>
+      <a href="#deps"><div class="n" data-to="8">٨</div><p class="l">أقسام</p></a>
+      <a href="#people"><div class="n" id="npeople" data-to="43">٤٣</div><p class="l">شخصية مؤسِّسة</p></a>
     </div>
   </div>
 </section>
