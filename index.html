@@ -67,6 +67,25 @@ p{margin:0}
 .hero .tg{margin-top:14px;font-size:clamp(1.25rem,1rem + 1.1vw,2rem);font-weight:500;color:var(--fg-2)}
 .cta{margin-top:24px;display:flex;justify-content:center;gap:24px;flex-wrap:wrap;align-items:center}
 .pill{background:var(--acc);color:var(--on-acc);padding:11px 24px;border-radius:999px;text-decoration:none;font-weight:500}
+.pill.ghost{all:unset;cursor:pointer;padding:10px 23px;border-radius:999px;border:1.5px solid var(--acc);color:var(--acc);font-weight:500;transition:background .25s,color .25s}
+.pill.ghost:hover,.pill.ghost[aria-expanded="true"]{background:var(--acc);color:var(--on-acc)}
+.pill.ghost:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.introbox{display:grid;grid-template-rows:0fr;transition:grid-template-rows .7s cubic-bezier(.25,.1,.25,1);margin-top:0}
+.introbox.open{grid-template-rows:1fr;margin-top:28px}
+.introin{overflow:hidden}
+.intro{position:relative;text-align:right;max-width:760px;margin-inline:auto;background:var(--bg-2);border-radius:14px;padding:clamp(24px,5vw,48px);max-height:min(70vh,640px);overflow-y:auto;scrollbar-width:thin;opacity:0;transform:translateY(16px);transition:opacity .5s .15s,transform .6s .15s}
+[data-skin="pro"] .intro,[data-skin="sand"] .intro{background:var(--tile)}
+.introbox.open .intro{opacity:1;transform:none}
+.intro .ik{color:var(--hi);font-weight:600;font-size:.9rem}
+.intro h2{font-size:clamp(1.5rem,1.1rem + 1.6vw,2.3rem);margin:6px 0 18px}
+.intro h3{font-size:1.25rem;margin:28px 0 10px}
+.intro p{color:var(--fg);line-height:2;margin:0 0 14px;font-size:1.02rem}
+.intro .iq{margin:4px 0 16px;padding:0 1.2em 0 0;display:grid;gap:4px;font-weight:600}
+.intro .iq li::marker{color:var(--hi)}
+.intro .isig{color:var(--fg-3);font-size:.95rem;margin-top:22px}
+.intro .ix{all:unset;cursor:pointer;position:sticky;top:0;float:left;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--line);color:var(--fg)}
+.intro .ix svg{width:16px;height:16px}
+.intro .ix:focus-visible{outline:2px solid var(--acc)}
 .lnk{color:var(--acc);text-decoration:none}
 .lnk:hover{text-decoration:underline;text-underline-offset:4px}
 .by{margin-top:20px;color:var(--fg-3);font-size:.95rem}
@@ -256,8 +275,33 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
   <div class="inner">
     <h1>مركز <em>النعيم</em><br>الثقافي والتراثي</h1>
     <p class="tg">بوابة المنامة إلى الذاكرة والتراث.</p>
-    <div class="cta"><a class="pill" href="#phases">اكتشف المشروع</a><a class="lnk" href="#map">جولة في المركز ›</a></div>
+    <div class="cta"><a class="pill" href="#phases">اكتشف المشروع</a><button type="button" class="pill ghost" id="introBtn" aria-expanded="false" aria-controls="introbox">مقدمة المشروع</button><a class="lnk" href="#map">جولة في المركز ›</a></div>
     <p class="by">دراسة ومقترح تأسيسي · عمار أحمد النشابة</p>
+
+    <div class="introbox" id="introbox"><div class="introin">
+      <article class="intro" id="intro" aria-label="مقدمة المشروع">
+        <button type="button" class="ix" id="introClose" aria-label="إغلاق المقدمة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        <p class="ik">رؤية المعد</p>
+        <h2>من الذاكرة المتناثرة إلى أيقونة ثقافية للبحرين</h2>
+        <p>لم تكن فكرة إعداد مشروع إنشاء مركز النعيم الثقافي والتراثي بالنسبة لي مجرد فكرة لإنشاء موقع يحتضن التراث، أو محاولة لجمع صور قديمة ووثائق ومقتنيات ترتبط بتاريخ المنطقة، وإنما جاءت نتيجة قناعة راسخة بأن وراء كل حي من أحياء البحرين تاريخاً إنسانياً عميقاً، ووراء كل أسرة وبيت ومهنة وشخصية حكاية تستحق أن تعرف، وتوثق، وتقرأ في سياقها الأوسع ضمن تاريخ المجتمع البحريني.</p>
+        <p>ومن هذا المنطلق، فإنني أنظر إلى النعيم بوصفها مساحة تاريخية واجتماعية وثقافية تتجاوز حدودها الجغرافية؛ فهي جزء من ذاكرة المنامة، ومكوّن من مكونات التجربة البحرينية التي تشكلت عبر أجيال من العمل والبحر والتجارة والحرف والعلم والثقافة والفنون والتكافل الاجتماعي. وما يدفعني إلى إعداد هذا المشروع هو الإحساس بأن هذه الذاكرة، على الرغم من غناها واتساعها، لا تزال بحاجة إلى رؤية تجمع عناصرها المتفرقة، وتمنحها إطاراً يتيح اكتشاف قيمتها وإبراز حضورها للأجيال القادمة.</p>
+        <h3>مشروع لا تختزله الجدران</h3>
+        <p>إنني لا أرى أن تاريخ النعيم يمكن اختزاله في صفحات دراسة، أو في قاعات مركز توثيق، أو في صرح تراثي مهما اتسعت مساحته وتنوعت مقتنياته. فالمبنى، مهما بلغت قيمته، لا يمثل سوى وسيلة لاحتضان قصة أكبر منه؛ قصة مجتمع تشكلت ملامحه من حياة الناس وتجاربهم، ومن أعمالهم وتضحياتهم وإبداعاتهم، ومن تفاصيل يومية قد تبدو بسيطة في ظاهرها، لكنها تحمل في عمقها دلالات تاريخية واجتماعية وثقافية لا تقدر بثمن.</p>
+        <p>ولهذا، فإن الهدف من إعداد هذا المشروع لا يتمثل في تقديم صورة مكتملة ونهائية عن النعيم، وكأن تاريخها قد انتهى وأصبح محفوظاً في سجل واحد، وإنما في فتح مسار مستمر لاكتشاف ما نملكه من إرث، وما فقدناه منه، وما لا يزال محفوظاً في ذاكرة أهلها، وما يمكن استعادته من خلال البحث والتوثيق والشهادات والصور والوثائق والمقتنيات والروايات الشفوية.</p>
+        <p>إنها محاولة للانتقال من التعامل مع التراث باعتباره ماضياً ينبغي حفظه، إلى التعامل معه باعتباره مصدر معرفة وهوية وإلهام، ووسيلة لفهم الحاضر وبناء المستقبل.</p>
+        <h3>لماذا أعددت المشروع بهذه الرؤية؟</h3>
+        <p>إن الدافع الحقيقي وراء إعداد هذا المشروع يرتبط برغبتي في أن نعيد النظر إلى النعيم من زاوية أوسع من حدودها السكنية والعمرانية، وأن نبحث عن موقعها الطبيعي في الذاكرة التاريخية للمنامة والبحرين.</p>
+        <p>فقد يكون لدينا تراث غني، وشخصيات تركت أثرها في المجتمع، ومهن وحرف ارتبطت بحياة الناس، وبيوت ومجالس ومساجد وأسواق وطرقات شهدت مراحل من التحول الاجتماعي، لكن قيمة هذه العناصر لا تكتمل بمجرد وجودها منفردة؛ بل تتجلى عندما نربط بينها، ونفهم سياقاتها، ونكشف علاقاتها، ونقدمها في صورة تجعل الإنسان قادراً على قراءة تاريخ المكان من خلال حياة أهله.</p>
+        <p>ومن هنا جاءت رغبتي في إعداد مشروع لا يكتفي بالسؤال: ماذا سنضع داخل المركز؟ وإنما يبدأ بأسئلة أكثر عمقاً:</p>
+        <ul class="iq"><li>ماذا نملك؟</li><li>وماذا بقي من ذاكرتنا؟</li><li>وماذا نحتاج إلى توثيقه؟</li><li>وما الذي يمكن أن نعيد اكتشافه؟</li><li>ومن هم الأشخاص والخبراء وأصحاب التجارب الذين يستطيعون أن يساهموا في صياغة هذه الذاكرة؟</li></ul>
+        <p>إن هذه الأسئلة تمثل في نظري نقطة البداية الحقيقية لأي مشروع ثقافي وتراثي يريد أن يكون صادقاً مع تاريخه، وواعياً بمسؤوليته تجاه مستقبله.</p>
+        <h3>من توثيق الماضي إلى بناء الحضور الثقافي</h3>
+        <p>لا أريد لهذا المشروع أن يتوقف عند استعادة صور الماضي أو سرد أسماء الشخصيات، على الرغم من أهمية ذلك وضرورته، وإنما أتطلع إلى أن يتحول إلى منظومة ثقافية متكاملة، تتفاعل فيها الذاكرة مع البحث، والتراث مع التعليم، والتوثيق مع الفنون، والتاريخ مع الحاضر.</p>
+        <p>فالمركز الذي أتصوره ينبغي أن يكون قادراً على استضافة الباحثين وأصحاب الاختصاص، وتشجيع أبناء المنطقة على تقديم ما لديهم من وثائق وروايات ومقتنيات، وإتاحة المجال أمام الأجيال الجديدة للتعرف إلى تاريخ مجتمعها والمشاركة في توثيقه وإعادة تقديمه بوسائل معاصرة.</p>
+        <p>كما أرى أن التراث لا ينبغي أن يبقى محصوراً داخل القاعات، بل يمكن أن يمتد إلى الفعاليات الثقافية والتعليمية، والمعارض المؤقتة، والبرامج المجتمعية، والمشروعات الفنية، والبحث في الذاكرة العمرانية والشفوية، بما يتيح للمركز أن يكون مساحة للتفاعل والحوار، وليس مجرد مكان للعرض.</p>
+        <p class="isig">عمار أحمد النشابة</p>
+      </article>
+    </div></div>
   </div>
 </header>
 
@@ -419,6 +463,14 @@ if(G){
   ScrollTrigger.create({trigger:'.state',start:'top 65%',once:true,onEnter:()=>document.fonts.ready.then(playSt)});
   $$('.n').forEach(n=>{const o={v:0},to=+n.dataset.to;gsap.to(o,{v:to,duration:1.6,ease:'power3.out',scrollTrigger:{trigger:n,start:'top 88%',once:true},onUpdate:()=>n.textContent=ar(Math.round(o.v))})});
 }
+
+/* intro panel */
+(function(){const btn=$('#introBtn'),box=$('#introbox'),art=$('#intro');
+ function setOpen(o){box.classList.toggle('open',o);btn.setAttribute('aria-expanded',String(o));if(o){art.scrollTop=0;if(window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),750)}}
+ btn.addEventListener('click',()=>setOpen(!box.classList.contains('open')));
+ $('#introClose').addEventListener('click',()=>{setOpen(false);btn.focus()});
+ art.setAttribute('data-lenis-prevent','');
+})();
 })();
 </script>
 
