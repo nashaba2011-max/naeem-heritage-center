@@ -327,6 +327,28 @@ p{margin:0}
 .inv .pbtn[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
 .inv .invh{margin:0;color:var(--fg-3);font-size:.85rem}
 .inv .invx{color:var(--fg-3);font-size:.8rem;font-weight:400}
+.inv .combo-l{display:flex;flex-direction:column;gap:6px}
+.inv .clab{font-size:.86rem;color:var(--fg-2);font-weight:500}
+.inv .combo{position:relative;display:flex;align-items:center;gap:4px;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:4px 6px;min-height:48px}
+.inv .combo:focus-within{outline:2px solid var(--acc);border-color:transparent}
+.inv .combo input.cdate,.inv .combo input.ctime{all:unset;font:inherit;font-size:1rem;color:var(--fg);direction:ltr;text-align:right;font-variant-numeric:tabular-nums;padding:8px 4px;min-width:0}
+.inv .combo input.cdate{width:7.2em;flex:none}
+.inv .tgrp{display:flex;align-items:center;flex:1 1 auto;min-width:0}
+.inv .combo input.ctime{flex:1 1 auto;width:7.6em}
+.inv .combo input::placeholder{color:var(--fg-3)}
+.inv .cic{all:unset;flex:none;width:34px;height:34px;border-radius:8px;display:grid;place-items:center;color:#8A4B22;cursor:pointer}
+.inv .cic.dico{cursor:default;width:26px}
+.inv button.cic:hover{background:color-mix(in srgb,#8A4B22 10%,transparent)}
+.inv .cic svg{width:19px;height:19px}
+.inv .csep{width:1px;height:24px;background:var(--line);flex:none;margin:0 6px}
+.inv .cday{margin-inline-start:auto;display:flex;align-items:center;gap:6px;flex:none;font-weight:700;color:#8A4B22;padding-inline-end:6px;white-space:nowrap}
+.inv .cday .dap{all:unset;cursor:pointer;padding:3px 7px;border-radius:7px;font-weight:700}
+.inv .cday .dap:hover{background:color-mix(in srgb,#8A4B22 10%,transparent)}
+.inv .cday .dap:focus-visible,.inv .cic:focus-visible{outline:2px solid var(--acc)}
+.inv .cday .dap[hidden]{display:none}
+[data-skin="pro"] .inv .cic,[data-skin="pro"] .inv .cday{color:#C98552}
+.inv .combo .dnat{position:absolute;right:6px;bottom:0;width:34px;height:1px;opacity:0;pointer-events:none;padding:0;border:0}
+@media (max-width:520px){.inv .combo{flex-wrap:wrap;row-gap:0}.inv .csep{display:none}.inv .tgrp{width:100%}.inv .cday{width:100%;justify-content:flex-end;padding:0 8px 6px;border-top:1px solid var(--line);padding-top:6px}.inv .combo input.cdate{width:6.4em}.inv .combo input.ctime{width:6.6em}}
 .inv .dwrap{position:relative;display:block}
 .inv .dwrap #invWhenTxt{padding-right:50px;padding-left:96px;direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
 .inv .dcal{all:unset;cursor:pointer;position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:8px;display:grid;place-items:center;color:#8A4B22}
@@ -686,8 +708,14 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
   <label class="invw">الجهة التي وافقت على تبنّي المشروع ورعايته<input id="invSpon" placeholder="مثال: مركز تمكين شباب النعيم"><span class="invx">تُكتب في: «وقد حظيت فكرة المشروع بموافقة (…) على تبنيها ورعايتها»</span></label>
   <div class="invg">
     <label class="invw">بالتنسيق مع<input id="invCo"></label>
-    <label class="invw">موعد الاجتماع<span class="dwrap"><input id="invWhenTxt" inputmode="numeric" placeholder="30.10.2026" maxlength="10" autocomplete="off"><button type="button" class="dcal" id="invCal" aria-label="اختيار من التقويم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button><input id="invWhen" type="date" tabindex="-1" aria-hidden="true" class="dnat"><span class="dday" id="invWhenTx" aria-live="polite"></span></span></label>
-    <label class="invw">الوقت<span class="dwrap"><input id="invTime" inputmode="numeric" placeholder="10.30 - 11.30" maxlength="15" autocomplete="off"><span class="dcal dico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><button type="button" class="dday dap" id="invAp" aria-label="تبديل صباحاً أو مساءً">صباحاً</button><input id="invApV" type="hidden" value=""></span></label>
+    <div class="invw combo-l"><span class="clab" id="cLab">موعد الاجتماع</span><div class="combo" role="group" aria-labelledby="cLab">
+      <button type="button" class="cic" id="invCal" aria-label="اختيار التاريخ من التقويم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
+      <input id="invWhenTxt" class="cdate" inputmode="numeric" placeholder="30.10.2026" maxlength="10" autocomplete="off" aria-label="التاريخ">
+      <span class="csep" aria-hidden="true"></span>
+      <span class="tgrp"><span class="cic dico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><input id="invTime" class="ctime" inputmode="numeric" placeholder="10.30 - 11.30" maxlength="15" autocomplete="off" aria-label="الوقت"></span>
+      <span class="cday"><span id="invWhenTx" aria-live="polite"></span><button type="button" class="dap" id="invAp" aria-label="تبديل صباحاً أو مساءً">صباحاً</button></span>
+      <input id="invWhen" type="date" tabindex="-1" aria-hidden="true" class="dnat"><input id="invApV" type="hidden" value="">
+    </div></div>
     <label class="invw">المكان<input id="invWhere"></label>
   </div>
   <div class="invb"><button type="button" class="pbtn" id="invPdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>حفظ الدعوة PDF</button><p class="invh" id="invHint">في نافذة الطباعة اختر «حفظ كـ PDF».</p></div>
