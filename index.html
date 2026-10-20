@@ -403,7 +403,10 @@ p{margin:0}
   #prt h3{font-size:12.5pt;margin:0 0 4px}
   #prt h4{font-size:10pt;color:#B07A2A;margin:8px 0 2px}
   #prt p{font-size:10.5pt;line-height:1.8;margin:0}
-  @page{margin:16mm 14mm}
+  @page{margin:0}
+  #prt .pgt{width:100%;border-collapse:collapse}
+  #prt .pgt td{padding:0 14mm}
+  #prt .pgt thead td,#prt .pgt tfoot td{height:15mm;padding:0}
 }
 .padd{--ship:#8A4B22}
 [data-skin="pro"] .padd{--ship:#C98552}
@@ -921,9 +924,10 @@ function openProfile(b){const det=b.closest('details'),inl=det.querySelector('.i
     else if(a==='del'){if(!confirm('حذف «'+p.n+'»؟'))return;if(p.key.startsWith('a:'))CH.added=CH.added.filter(y=>'a:'+y.id!==p.key);else{CH.del.push(p.key);delete CH.edits[p.key]}saveCH();renderPeople()}}));
   b.setAttribute('aria-expanded','true');inl.classList.add('open');if(window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),550)}
 /* print */
+const PG=h=>`<table class="pgt"><thead><tr><td></td></tr></thead><tfoot><tr><td></td></tr></tfoot><tbody><tr><td>${h}</td></tr></tbody></table>`;
 function printPeople(groups,title){let el=$('#prt');if(!el){el=document.createElement('div');el.id='prt';document.body.appendChild(el)}
   const d=new Date().toLocaleDateString('ar-BH',{year:'numeric',month:'long',day:'numeric'});const tot=groups.reduce((s,g)=>s+g.p.length,0);
-  el.innerHTML=`<header><h1>${title?esc(title):'الشخصيات المؤثرة في المشروع'}</h1><p>مركز النعيم الثقافي والتراثي${title?'':' · '+ar(tot)+' شخصية في '+ar(groups.length)+' مجالاً'} · ${d}</p></header>`+groups.map(g=>`<h2>${esc(g.c)}</h2>`+g.p.map(p=>`<article>${title?'':`<h3>${esc(p.n)}</h3>`}${p.bio?`<p>${esc(p.bio)}</p>`:''}${p.role?`<h4>الدور المقترح في المشروع</h4><p>${esc(p.role)}</p>`:''}${p.impact?`<h4>${isHer(p.n)?'أثر حضورها':'أثر حضوره'}</h4><p>${esc(p.impact)}</p>`:''}</article>`).join('')).join('');
+  el.innerHTML=PG(`<header><h1>${title?esc(title):'الشخصيات المؤثرة في المشروع'}</h1><p>مركز النعيم الثقافي والتراثي${title?'':' · '+ar(tot)+' شخصية في '+ar(groups.length)+' مجالاً'} · ${d}</p></header>`+groups.map(g=>`<h2>${esc(g.c)}</h2>`+g.p.map(p=>`<article>${title?'':`<h3>${esc(p.n)}</h3>`}${p.bio?`<p>${esc(p.bio)}</p>`:''}${p.role?`<h4>الدور المقترح في المشروع</h4><p>${esc(p.role)}</p>`:''}${p.impact?`<h4>${isHer(p.n)?'أثر حضورها':'أثر حضوره'}</h4><p>${esc(p.impact)}</p>`:''}</article>`).join('')).join(''));
   document.documentElement.classList.add('printing');const done=()=>{document.documentElement.classList.remove('printing');removeEventListener('afterprint',done)};addEventListener('afterprint',done);setTimeout(()=>{window.print();setTimeout(done,1500)},60)}
 $('#pprint').addEventListener('click',()=>printPeople(ALL));
 /* admin: add / edit / delete */
@@ -1043,7 +1047,7 @@ if(G){
  $('#invPdf').addEventListener('click',()=>{const p=person();if(!p){$('#invHint').textContent='اختر اسم المدعو أولاً.';sel.focus();return}
   $('#invHint').textContent='في نافذة الطباعة اختر «حفظ كـ PDF».';
   let el=$('#prt');if(!el){el=document.createElement('div');el.id='prt';document.body.appendChild(el)}
-  el.className='letter';el.innerHTML=letterHTML(p);
+  el.className='letter';el.innerHTML=PG(letterHTML(p));
   const t0=document.title;document.title='دعوة - '+p.n.replace(TTL,'').trim();
   document.documentElement.classList.add('printing');
   const done=()=>{document.documentElement.classList.remove('printing');el.className='';document.title=t0;removeEventListener('afterprint',done)};
