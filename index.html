@@ -73,7 +73,7 @@ p{margin:0}
 .introbox{display:grid;grid-template-rows:0fr;transition:grid-template-rows .7s cubic-bezier(.25,.1,.25,1);margin-top:0}
 .introbox.open{grid-template-rows:1fr;margin-top:28px}
 .introin{overflow:hidden}
-.intro{position:relative;text-align:right;max-width:760px;margin-inline:auto;background:var(--bg-2);border-radius:14px;padding:clamp(24px,5vw,48px);max-height:min(70vh,640px);overflow-y:auto;scrollbar-width:thin;opacity:0;transform:translateY(16px);transition:opacity .5s .15s,transform .6s .15s}
+.intro{position:relative;text-align:right;max-width:760px;margin-inline:auto;background:var(--bg-2);border-radius:14px;padding:clamp(24px,5vw,48px);opacity:0;transform:translateY(16px);transition:opacity .5s .15s,transform .6s .15s}
 [data-skin="pro"] .intro,[data-skin="sand"] .intro{background:var(--tile)}
 .introbox.open .intro{opacity:1;transform:none}
 .intro .ik{color:var(--hi);font-weight:700;font-size:clamp(1.3rem,1.1rem + .8vw,1.7rem)}
@@ -82,8 +82,9 @@ p{margin:0}
 .intro p{color:var(--fg);line-height:2;margin:0 0 14px;font-size:1.02rem}
 .intro .iq{margin:4px 0 16px;padding:0 1.2em 0 0;display:grid;gap:4px;font-weight:600}
 .intro .iq li::marker{color:var(--hi)}
+.intro .iquote{font-weight:700;font-size:1.15rem;color:var(--hi);margin-top:18px}
 .intro .isig{color:var(--fg-3);font-size:.95rem;margin-top:22px}
-.intro .ix{all:unset;cursor:pointer;position:sticky;top:0;float:left;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--line);color:var(--fg)}
+.intro .ix{all:unset;cursor:pointer;float:left;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--line);color:var(--fg)}
 .intro .ix svg{width:16px;height:16px}
 .intro .ix:focus-visible{outline:2px solid var(--acc)}
 .lnk{color:var(--acc);text-decoration:none}
@@ -299,6 +300,21 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
         <p>لا أريد لهذا المشروع أن يتوقف عند استعادة صور الماضي أو سرد أسماء الشخصيات، على الرغم من أهمية ذلك وضرورته، وإنما أتطلع إلى أن يتحول إلى منظومة ثقافية متكاملة، تتفاعل فيها الذاكرة مع البحث، والتراث مع التعليم، والتوثيق مع الفنون، والتاريخ مع الحاضر.</p>
         <p>فالمركز الذي أتصوره ينبغي أن يكون قادراً على استضافة الباحثين وأصحاب الاختصاص، وتشجيع أبناء المنطقة على تقديم ما لديهم من وثائق وروايات ومقتنيات، وإتاحة المجال أمام الأجيال الجديدة للتعرف إلى تاريخ مجتمعها والمشاركة في توثيقه وإعادة تقديمه بوسائل معاصرة.</p>
         <p>كما أرى أن التراث لا ينبغي أن يبقى محصوراً داخل القاعات، بل يمكن أن يمتد إلى الفعاليات الثقافية والتعليمية، والمعارض المؤقتة، والبرامج المجتمعية، والمشروعات الفنية، والبحث في الذاكرة العمرانية والشفوية، بما يتيح للمركز أن يكون مساحة للتفاعل والحوار، وليس مجرد مكان للعرض.</p>
+        <h3>النعيم... من الذاكرة المحلية إلى الأفق الوطني</h3>
+        <p>إن طموحي لهذا المشروع لا يقف عند حدود توثيق تاريخ النعيم لأبنائها، وإن كان ذلك هدفاً أصيلاً لا يمكن التنازل عنه، بل يتطلع إلى أن تصبح النعيم نموذجاً في كيفية اكتشاف الذاكرة المحلية وتحويلها إلى قيمة ثقافية ومعرفية تخدم المجتمع البحريني بأسره.</p>
+        <p>وأرى أن موقع النعيم وصلتها التاريخية بالمنامة يتيحان التفكير في دور أوسع للمشروع؛ دور يجعل منها نافذة يتعرف من خلالها الزائر والباحث والجيل الجديد على جانب من تاريخ البحرين وتطور مجتمعها، وعلى ما أسهمت به المنطقة وأبناؤها في الحياة الاقتصادية والاجتماعية والثقافية.</p>
+        <p>ومن هنا، فإن عبارة «النعيم... بوابة المنامة إلى الذاكرة والتراث» لا أطرحها باعتبارها وصفاً لموقع جغرافي فقط، وإنما باعتبارها رؤية لما يمكن أن تصبح عليه المنطقة من خلال مشروع ثقافي يربط تاريخها بمحيطها، ويعزز حضورها في المشهد الثقافي والتراثي والسياحي لمملكة البحرين.</p>
+        <p>إن طموحي أن تسهم النعيم في تقديم نموذج يليق بتاريخها، وأن تتحول، عبر مشروع مدروس وشراكات فاعلة ومشاركة مجتمعية واسعة، إلى إحدى العلامات الثقافية والتراثية البارزة في البحرين؛ أيقونة تستمد قيمتها من أصالة تاريخها، وثراء ذاكرتها، وقدرتها على التجدد والتواصل مع الأجيال.</p>
+        <h3>مشروع يؤسس للمستقبل ولا يكتفي باستعادة الماضي</h3>
+        <p>أدرك أن حجم هذا المشروع واتساع موضوعاته وتعدد مجالاته يفوق قدرة فرد أو مجموعة محدودة على الإحاطة به، ولذلك فإنني لا أقدمه بوصفه عملاً مكتملاً أو رؤية مغلقة، وإنما أطرحه باعتباره دعوة إلى التشارك في التفكير والتوثيق والبناء.</p>
+        <p>إن ما أطمح إليه هو أن تتضافر جهود مركز تمكين شباب النعيم، وأبناء المنطقة، والباحثين والمؤرخين والمختصين وأصحاب الخبرات، وكل من يمتلك معرفة أو وثيقة أو رواية أو تجربة يمكن أن تضيف إلى هذا العمل، حتى تتشكل رؤية أكثر شمولاً وعمقاً، تستند إلى المعرفة الموثوقة، وتحترم تنوع الذاكرة، وتمنح كل مجال من مجالات التراث ما يستحقه من دراسة وعناية.</p>
+        <p>ولا أريد أن نبدأ بتحديد شكل المبنى قبل أن نفهم حجم القصة التي نريد أن يحتضنها، ولا أن نضع حدوداً لمحتوى المركز قبل أن نكتشف ما يمكن أن تقدمه ذاكرة النعيم. فالمكان ينبغي أن ينشأ استجابة للحاجة الثقافية والتوثيقية، وأن يتطور مع تطور المعرفة والمحتوى والشراكات والبرامج.</p>
+        <h3>كلمة أخيرة من المعد</h3>
+        <p>إن هذا المشروع يمثل بالنسبة لي مسؤولية فكرية واجتماعية تجاه المكان الذي أنتمي إليه، وتجاه الذاكرة التي حملها أبناء النعيم عبر الأجيال، وتجاه المستقبل الذي يستحق أن يتعرف إلى جذوره بصورة واعية وموثقة.</p>
+        <p>وإذا كان من الممكن أن نؤسس مركزاً ثقافياً وتراثياً، فإن طموحي يتجاوز تأسيس المكان إلى بناء الوعي بقيمة الذاكرة، وتحويل التراث إلى طاقة معرفية وثقافية متجددة، وجعل النعيم حاضرة في المشهد الوطني بوصفها جزءاً أصيلاً من تاريخ البحرين والمنامة.</p>
+        <p>إنني أؤمن بأن نجاح هذا المشروع لا يقاس بمساحة المبنى، ولا بعدد المقتنيات التي يمكن جمعها، ولا بحجم الفعاليات التي يمكن تنظيمها وحدها، وإنما بقدرته على أن يجعل الناس يرون تاريخهم بصورة أعمق، وأن يشعر أبناء النعيم بأن ذاكرتهم محل تقدير ومسؤولية، وأن يجد الجيل الجديد في تراثه مصدراً للمعرفة والانتماء والإبداع.</p>
+        <p>ومن هنا، فإنني أضع هذه الدراسة بين أيدي مؤسسات ومراكز وجمعيات النعيم، وأبناء المنطقة، وكل من يمكن أن يساهم في هذا المسار، أملاً في أن تتحول الفكرة إلى مشروع مؤسسي متكامل، وأن تكون النعيم نموذجاً حياً في صون الذاكرة المحلية، وإبراز قيمتها الوطنية، وفتح آفاقها نحو المستقبل.</p>
+        <p class="iquote">النعيم ليست مجرد مكان نروي تاريخه، وإنما ذاكرة نعيد اكتشافها، وهوية نصونها، ومستقبل ثقافي نشارك في بنائه.</p>
         <p class="isig">عمار أحمد النشابة</p>
       </article>
     </div></div>
@@ -466,7 +482,7 @@ if(G){
 
 /* intro panel */
 (function(){const btn=$('#introBtn'),box=$('#introbox'),art=$('#intro');
- function setOpen(o){box.classList.toggle('open',o);btn.setAttribute('aria-expanded',String(o));if(o){art.scrollTop=0;if(window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),750)}}
+ function setOpen(o){box.classList.toggle('open',o);btn.setAttribute('aria-expanded',String(o));if(o){if(window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),750)}}
  btn.addEventListener('click',()=>setOpen(!box.classList.contains('open')));
  $('#introClose').addEventListener('click',()=>{setOpen(false);btn.focus()});
  art.setAttribute('data-lenis-prevent','');
