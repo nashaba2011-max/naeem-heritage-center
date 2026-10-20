@@ -306,6 +306,34 @@ p{margin:0}
 .mnote{margin-top:12px;color:var(--fg-3);font-size:.8rem}
 
 /* people extra fields */
+.inv{margin:6px 0 30px;padding:20px;border-radius:14px;background:var(--bg);border:1.5px solid #8A4B22;display:flex;flex-direction:column;gap:14px}
+[data-skin="pro"] .inv{border-color:#C98552}
+.inv .invt{font-weight:700;margin:0;color:var(--fg)}
+.inv label{display:flex;flex-direction:column;gap:6px;font-size:.86rem;color:var(--fg-2);font-weight:500}
+.inv select,.inv input{font:inherit;font-size:1rem;color:var(--fg);background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+.inv select:focus,.inv input:focus{outline:2px solid var(--acc);border-color:transparent}
+.inv .invg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.inv .invw{grid-column:1/-1}
+.inv .invb{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.inv .pbtn{display:inline-flex;align-items:center;gap:8px}
+.inv .pbtn svg{width:18px;height:18px}
+.inv .pbtn[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
+.inv .invh{margin:0;color:var(--fg-3);font-size:.85rem}
+.intro .lfill{color:var(--hi);font-weight:700}
+@media (max-width:560px){.inv .invg{grid-template-columns:1fr}}
+@media print{
+  html.printing #prt.letter{font-size:12pt}
+  #prt.letter .lb{text-align:center;font-weight:600;margin:0 0 14pt}
+  #prt.letter h1{font-size:17pt;text-align:center;margin:0 0 18pt;line-height:1.5}
+  #prt.letter h3{font-size:12.5pt;color:#8A4B22;margin:14pt 0 4pt;break-after:avoid}
+  #prt.letter p{font-size:11.5pt;line-height:1.95;margin:0 0 7pt}
+  #prt.letter ul,#prt.letter ol{margin:0 0 8pt;padding:0 1.3em 0 0;font-size:11.5pt;line-height:1.85}
+  #prt.letter li{break-inside:avoid}
+  #prt.letter .sig{margin-top:20pt;line-height:1.9}
+  #prt.letter .sig p{margin:0}
+  #prt.letter .sal{font-weight:700}
+}
+
 .xtiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:clamp(40px,6vw,64px)}
 .xt{all:unset;cursor:pointer;position:relative;display:flex;flex-direction:column;gap:6px;text-align:right;padding:22px 22px 52px;border-radius:14px;background:var(--bg-2);transition:background .3s,color .3s,transform .35s cubic-bezier(.2,.8,.2,1)}
 [data-skin="pro"] .xt,[data-skin="sand"] .xt{background:var(--tile)}
@@ -618,11 +646,24 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
 <p class="iquote">فالتراث الذي نحييه اليوم هو الرسالة التي نتركها لأبنائنا غداً، والذاكرة التي نحفظها هي الأثر الذي يبقى شاهداً على من صنعوا تاريخنا.</p>
 <div class="iback"><button type="button" class="xback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>رجوع</button></div></article>
 <article class="intro xa" id="x4" hidden aria-label="نموذج لرسالة الدعوة"><button type="button" class="ix" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><p class="ibism">بسم الله الرحمن الرحيم</p><p class="ik">نموذج من رسالة الدعوة</p><h2>دعوة لحضور المؤتمر التأسيسي لمشروع مركز النعيم الثقافي والتراثي</h2>
+<div class="inv" id="inv">
+  <p class="invt">جهّز الدعوة لشخصية محددة</p>
+  <label class="invw">اسم المدعو<select id="invName"><option value="">اختر من قائمة الشخصيات…</option></select></label>
+  <div class="invg">
+    <label>الجهة الراعية<input id="invSpon" placeholder="مثال: مركز تمكين شباب النعيم"></label>
+    <label>بالتنسيق مع<input id="invCo"></label>
+    <label>التاريخ<input id="invDate"></label>
+    <label>موعد المؤتمر<input id="invWhen" placeholder="اليوم والساعة"></label>
+    <label class="invw">المكان<input id="invWhere"></label>
+  </div>
+  <div class="invb"><button type="button" class="pbtn" id="invPdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>حفظ الدعوة PDF</button><p class="invh" id="invHint">في نافذة الطباعة اختر «حفظ كـ PDF».</p></div>
+</div>
+
 <p>السلام عليكم ورحمة الله وبركاته،،،</p>
-<p>الأخ الكريم / الأخت الكريمة ................................ المحترم/ة،،</p>
-<h3>التعريف بالشخصية</h3>
+<p class="lsal">الأخ الكريم / الأخت الكريمة ................................ المحترم/ة،،</p>
+<h3 class="lbioh">التعريف بالشخصية</h3><p class="lbio" hidden></p>
 <p>يسرنا دعوتكم للمشاركة في المؤتمر التأسيسي لمشروع مركز النعيم الثقافي والتراثي، الذي يأتي انطلاقاً من الرغبة في حفظ وتوثيق الموروث التاريخي والثقافي والاجتماعي لمنطقة النعيم، وإبرازه بصورة تليق بتاريخها وإسهامات أهلها في مسيرة البحرين.</p>
-<p>وقد حظيت فكرة المشروع بموافقة) ( على تبنيها ورعايتها في مرحلتها التأسيسية، باعتباره المظلة المؤسسية التي يمكن أن تجمع الجهود والخبرات، وتدعم التنسيق بين أصحاب الشأن والاختصاص، وصولاً إلى بلورة مشروع ثقافي وتراثي يقوم على أسس معرفية ومجتمعية واضحة.</p>
+<p>وقد حظيت فكرة المشروع بموافقة (<span class="lspon">............</span>) على تبنيها ورعايتها في مرحلتها التأسيسية، باعتباره المظلة المؤسسية التي يمكن أن تجمع الجهود والخبرات، وتدعم التنسيق بين أصحاب الشأن والاختصاص، وصولاً إلى بلورة مشروع ثقافي وتراثي يقوم على أسس معرفية ومجتمعية واضحة.</p>
 <h3>لماذا ندعوكم؟</h3>
 <p>إن مشروع مركز النعيم الثقافي والتراثي لا يمكن أن يُبنى من تصور فردي أو من خلال جهة واحدة، بل يحتاج إلى مشاركة أصحاب الخبرة والمعرفة، وأبناء المنطقة الذين يحملون في ذاكرتهم تاريخها وتجاربها وموروثها.</p>
 <p>ومن هذا المنطلق، تأتي دعوتكم باعتباركم من أصحاب الشأن أو الخبرة أو الاهتمام الذين يمكن أن يسهموا في إثراء المشروع برؤاهم ومعلوماتهم ومقترحاتهم وعلاقاتهم، والمساعدة في تحديد مكوناته وأولوياته وسبل تطويره .</p>
@@ -665,10 +706,10 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
 <p>وتفضلوا بقبول خالص التقدير والاحترام،،،</p>
 <p class="isig">المعد والمشارك معكم</p>
 <p class="isig">عمار أحمد النشابة</p>
-<p class="isig">بالتنسيق مع (...........................)</p>
-<p class="isig">التاريخ: ............................</p>
-<p class="isig">موعد المؤتمر: ............................</p>
-<p class="isig">المكان: ............................</p>
+<p class="isig">بالتنسيق مع (<span class="lco">...........................</span>)</p>
+<p class="isig">التاريخ: <span class="ldate">............................</span></p>
+<p class="isig">موعد المؤتمر: <span class="lwhen">............................</span></p>
+<p class="isig">المكان: <span class="lwhere">............................</span></p>
 <div class="iback"><button type="button" class="xback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>رجوع</button></div></article>
     </div></div>
     <dialog class="pdlg" id="pdlg" aria-labelledby="pdlgT">
@@ -967,6 +1008,46 @@ if(G){
  tiles.forEach(t=>t.addEventListener('click',()=>show(cur===t.dataset.x?null:t.dataset.x)));
  $$('#xbox .ix').forEach(b=>b.addEventListener('click',()=>{const t=tiles.find(x=>x.dataset.x===cur);show(null);if(t)t.focus()}));
  $$('#xbox .xback').forEach(b=>b.addEventListener('click',()=>{const t=tiles.find(x=>x.dataset.x===cur)||tiles[0];const g=$('#xtiles');if(typeof lenis!=='undefined'&&lenis)lenis.scrollTo(g,{offset:-120,duration:1.1});else g.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>{show(null);t.focus({preventScroll:true})},700)}));
+})();
+
+/* invitation letter: pick a person, save as PDF */
+(function(){const art=$('#x4'),sel=$('#invName');if(!art||!sel)return;
+ const F={spon:$('#invSpon'),co:$('#invCo'),date:$('#invDate'),when:$('#invWhen'),where:$('#invWhere')};
+ try{const v=JSON.parse(localStorage.getItem('naeem-invite')||'{}');Object.keys(F).forEach(k=>{if(v[k])F[k].value=v[k]})}catch(e){}
+ if(!F.date.value)F.date.value=new Date().toLocaleDateString('ar-BH',{year:'numeric',month:'long',day:'numeric'});
+ const save=()=>{try{const v={};Object.keys(F).forEach(k=>v[k]=F[k].value);localStorage.setItem('naeem-invite',JSON.stringify(v))}catch(e){}};
+ function fill(){const cur=sel.value;sel.innerHTML='<option value="">اختر من قائمة الشخصيات…</option>'+ALL.map(g=>`<optgroup label="${esc(g.c)}">${g.p.map(p=>`<option value="${esc(p.key)}"${p.key===cur?' selected':''}>${esc(p.n)}</option>`).join('')}</optgroup>`).join('')}
+ const person=()=>{const f=sel.value&&findP(sel.value);return f?f.p:null};
+ const dots='............................';
+ const val=(k,d)=>F[k].value.trim()||d;
+ function salut(p){if(!p)return'الأخ الكريم / الأخت الكريمة ................................ المحترم/ة،،';return isHer(p.n)?`الأخت الكريمة / ${p.n} المحترمة،،`:`الأخ الكريم / ${p.n} المحترم،،`}
+ function sync(){const p=person();
+  art.querySelector('.lsal').innerHTML=p?esc(salut(p)).replace(esc(p.n),`<span class="lfill">${esc(p.n)}</span>`):esc(salut(null));
+  const bio=art.querySelector('.lbio'),bh=art.querySelector('.lbioh');bio.textContent=p&&p.bio||'';bio.hidden=!(p&&p.bio);
+  art.querySelector('.lspon').textContent=val('spon','............');art.querySelector('.lco').textContent=val('co','...........................');
+  art.querySelector('.ldate').textContent=val('date',dots);art.querySelector('.lwhen').textContent=val('when',dots);art.querySelector('.lwhere').textContent=val('where',dots);
+  $('#invPdf').setAttribute('aria-disabled',String(!p))}
+ sel.addEventListener('focus',fill);sel.addEventListener('pointerdown',fill);sel.addEventListener('change',sync);
+ Object.values(F).forEach(i=>i.addEventListener('input',()=>{sync();save()}));
+ fill();sync();
+ function letterHTML(p){const out=[];let skip=false;
+  out.push('<p class="lb">بسم الله الرحمن الرحيم</p>');out.push(`<h1>${esc(art.querySelector('h2').textContent)}</h1>`);
+  [...art.children].forEach(el=>{
+   if(el.matches('.ix,.ibism,.ik,h2,.inv,.iback'))return;
+   if(el.matches('.lbioh')){if(p.bio)out.push('<h3>التعريف بالشخصية</h3>');return}
+   if(el.matches('.lbio')){if(p.bio)out.push(`<p>${esc(p.bio)}</p>`);return}
+   if(el.matches('.lsal')){out.push(`<p class="sal">${esc(salut(p))}</p>`);return}
+   if(el.matches('.isig')){if(!skip){out.push('<div class="sig">');skip=true}out.push(`<p>${esc(el.textContent)}</p>`);return}
+   out.push(el.outerHTML)});
+  if(skip)out.push('</div>');return out.join('')}
+ $('#invPdf').addEventListener('click',()=>{const p=person();if(!p){$('#invHint').textContent='اختر اسم المدعو أولاً.';sel.focus();return}
+  $('#invHint').textContent='في نافذة الطباعة اختر «حفظ كـ PDF».';
+  let el=$('#prt');if(!el){el=document.createElement('div');el.id='prt';document.body.appendChild(el)}
+  el.className='letter';el.innerHTML=letterHTML(p);
+  const t0=document.title;document.title='دعوة - '+p.n.replace(TTL,'').trim();
+  document.documentElement.classList.add('printing');
+  const done=()=>{document.documentElement.classList.remove('printing');el.className='';document.title=t0;removeEventListener('afterprint',done)};
+  addEventListener('afterprint',done);setTimeout(()=>{window.print();setTimeout(done,1500)},60)});
 })();
 
 })();
