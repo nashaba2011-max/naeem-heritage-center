@@ -527,7 +527,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
 
 <section class="sec band c" id="people">
   <div class="inner">
-    <h2 class="h2" id="ph">٤٣ شخصية. ١١ مجالاً.</h2>
+    <h2 class="h2" id="ph">الشخصيات المؤثرة في المشروع</h2>
     <p class="sub">كل اسم يضيف خبرة أو علاقة أو ذاكرة.</p>
     <div class="acc" id="acc"></div>
     <div class="padd" id="padd">
@@ -722,7 +722,6 @@ function merge(){const all=PEOPLE.map(c=>({c:c.c,p:[]}));const grp=c=>{let g=all
   return all.filter(g=>g.p.length)}
 function renderPeople(){
   ALL=merge();const tot=ALL.reduce((s,c)=>s+c.p.length,0);
-  $('#ph').textContent=`${ar(tot)} شخصية. ${ar(ALL.length)} مجالاً.`;
   const np=$('#npeople');if(np){const was=np.textContent===ar(np.dataset.to);np.dataset.to=tot;if(was||!window.gsap)np.textContent=ar(tot)}
   const openCats=$$('#acc details[open]').map(d=>d.dataset.c);
   acc.innerHTML=ALL.map((c,ci)=>`<details data-c="${esc(c.c)}"${openCats.includes(c.c)?' open':''}><summary>${esc(c.c)}<span class="cnt">${ar(c.p.length)}</span>${PLUS}</summary><div class="chips">${c.p.map(p=>`<button type="button" class="pchip${p.nw?' new':p.ed&&unlocked()?' ed':''}" aria-expanded="false" data-key="${esc(p.key)}">${esc(p.n)}</button>`).join('')}</div><div class="inl"><div></div></div></details>`).join('');
@@ -747,7 +746,7 @@ function openProfile(b){const det=b.closest('details'),inl=det.querySelector('.i
 /* print */
 function printPeople(groups,title){let el=$('#prt');if(!el){el=document.createElement('div');el.id='prt';document.body.appendChild(el)}
   const d=new Date().toLocaleDateString('ar-BH',{year:'numeric',month:'long',day:'numeric'});const tot=groups.reduce((s,g)=>s+g.p.length,0);
-  el.innerHTML=`<header><h1>${title?esc(title):'الشخصيات المؤسِّسة'}</h1><p>مركز النعيم الثقافي والتراثي${title?'':' · '+ar(tot)+' شخصية في '+ar(groups.length)+' مجالاً'} · ${d}</p></header>`+groups.map(g=>`<h2>${esc(g.c)}</h2>`+g.p.map(p=>`<article>${title?'':`<h3>${esc(p.n)}</h3>`}${p.bio?`<p>${esc(p.bio)}</p>`:''}${p.role?`<h4>الدور المقترح في المشروع</h4><p>${esc(p.role)}</p>`:''}${p.impact?`<h4>${isHer(p.n)?'أثر حضورها':'أثر حضوره'}</h4><p>${esc(p.impact)}</p>`:''}</article>`).join('')).join('');
+  el.innerHTML=`<header><h1>${title?esc(title):'الشخصيات المؤثرة في المشروع'}</h1><p>مركز النعيم الثقافي والتراثي${title?'':' · '+ar(tot)+' شخصية في '+ar(groups.length)+' مجالاً'} · ${d}</p></header>`+groups.map(g=>`<h2>${esc(g.c)}</h2>`+g.p.map(p=>`<article>${title?'':`<h3>${esc(p.n)}</h3>`}${p.bio?`<p>${esc(p.bio)}</p>`:''}${p.role?`<h4>الدور المقترح في المشروع</h4><p>${esc(p.role)}</p>`:''}${p.impact?`<h4>${isHer(p.n)?'أثر حضورها':'أثر حضوره'}</h4><p>${esc(p.impact)}</p>`:''}</article>`).join('')).join('');
   document.documentElement.classList.add('printing');const done=()=>{document.documentElement.classList.remove('printing');removeEventListener('afterprint',done)};addEventListener('afterprint',done);setTimeout(()=>{window.print();setTimeout(done,1500)},60)}
 $('#pprint').addEventListener('click',()=>printPeople(ALL));
 /* admin: add / edit / delete */
