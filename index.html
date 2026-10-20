@@ -319,6 +319,9 @@ p{margin:0}
 .inv .pbtn svg{width:18px;height:18px}
 .inv .pbtn[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
 .inv .invh{margin:0;color:var(--fg-3);font-size:.85rem}
+.inv .invx{color:var(--fg-3);font-size:.8rem;font-weight:400}
+.intro .lspon,.intro .lco,.intro .ldate,.intro .lwhen,.intro .lwhere{cursor:pointer;border-bottom:1px dashed currentColor}
+.intro .lset{color:var(--hi);font-weight:700;border-bottom:0}
 .intro .lfill{color:var(--hi);font-weight:700}
 @media (max-width:560px){.inv .invg{grid-template-columns:1fr}}
 @media print{
@@ -652,9 +655,9 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
 <div class="inv" id="inv">
   <p class="invt">جهّز الدعوة لشخصية محددة</p>
   <label class="invw">اسم المدعو<select id="invName"><option value="">اختر من قائمة الشخصيات…</option></select></label>
+  <label class="invw">الجهة التي وافقت على تبنّي المشروع ورعايته<input id="invSpon" placeholder="مثال: مركز تمكين شباب النعيم"><span class="invx">تُكتب في: «وقد حظيت فكرة المشروع بموافقة (…) على تبنيها ورعايتها»</span></label>
   <div class="invg">
-    <label>الجهة الراعية<input id="invSpon" placeholder="مثال: مركز تمكين شباب النعيم"></label>
-    <label>بالتنسيق مع<input id="invCo"></label>
+    <label class="invw">بالتنسيق مع<input id="invCo"></label>
     <label>التاريخ<input id="invDate"></label>
     <label>موعد المؤتمر<input id="invWhen" placeholder="اليوم والساعة"></label>
     <label class="invw">المكان<input id="invWhere"></label>
@@ -1028,9 +1031,10 @@ if(G){
  function sync(){const p=person();
   art.querySelector('.lsal').innerHTML=p?esc(salut(p)).replace(esc(p.n),`<span class="lfill">${esc(p.n)}</span>`):esc(salut(null));
   const bio=art.querySelector('.lbio'),bh=art.querySelector('.lbioh');bio.textContent=p&&p.bio||'';bio.hidden=!(p&&p.bio);
-  art.querySelector('.lspon').textContent=val('spon','............');art.querySelector('.lco').textContent=val('co','...........................');
+  art.querySelector('.lspon').textContent=val('spon','............');[['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).classList.toggle('lset',!!F[k].value.trim()));art.querySelector('.lco').textContent=val('co','...........................');
   art.querySelector('.ldate').textContent=val('date',dots);art.querySelector('.lwhen').textContent=val('when',dots);art.querySelector('.lwhere').textContent=val('where',dots);
   $('#invPdf').setAttribute('aria-disabled',String(!p))}
+ [['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).addEventListener('click',()=>{F[k].scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>F[k].focus({preventScroll:true}),350)}));
  sel.addEventListener('focus',fill);sel.addEventListener('pointerdown',fill);sel.addEventListener('change',sync);
  Object.values(F).forEach(i=>i.addEventListener('input',()=>{sync();save()}));
  fill();sync();
