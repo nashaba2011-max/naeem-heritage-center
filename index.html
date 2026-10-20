@@ -390,6 +390,8 @@ p{margin:0}
   #prt.letter .sig{margin-top:20pt;line-height:1.9}
   #prt.letter .sig p{margin:0}
   #prt.letter .sal{font-weight:700}
+  #prt.letter .lurl{margin-top:16pt;padding-top:8pt;border-top:1px solid #d9c3b0;font-size:10.5pt;color:#555}
+  #prt.letter .lurl a{color:#8A4B22;font-weight:700;text-decoration:underline;direction:ltr;unicode-bidi:isolate}
 }
 
 .xtiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:clamp(40px,6vw,64px)}
@@ -1128,7 +1130,10 @@ if(G){
    if(el.matches('.lsal')){out.push(`<p class="sal">${esc(salut(p))}</p>`);return}
    if(el.matches('.isig')){if(!skip){out.push('<div class="sig">');skip=true}out.push(`<p>${esc(el.textContent)}</p>`);return}
    out.push(el.outerHTML)});
-  if(skip)out.push('</div>');return out.join('')}
+  if(skip)out.push('</div>');
+  const URL='https://nashaba2011-max.github.io/naeem-heritage-center/';
+  out.push(`<p class="lurl">للتعرف على المشروع بالتفصيل، تفضّلوا بزيارة موقعه:<br><a href="${URL}">${URL.replace(/^https:\/\//,'').replace(/\/$/,'')}</a></p>`);
+  return out.join('')}
  $('#invPdf').addEventListener('click',()=>{if(!unlocked()){gate();return}const p=person();if(!p){$('#invHint').textContent='اختر اسم المدعو أولاً.';sel.focus();return}
   $('#invHint').textContent='في نافذة الطباعة اختر «حفظ كـ PDF».';
   let el=$('#prt');if(!el){el=document.createElement('div');el.id='prt';document.body.appendChild(el)}
