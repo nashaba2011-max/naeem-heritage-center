@@ -1053,6 +1053,7 @@ if(G){
   [...art.children].forEach(el=>{
    if(el.matches('.ix,.ibism,.ik,h2,.inv,.iback'))return;
    if(el.matches('.lbioh'))return;
+   const fk=[['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.lwhere','where']].find(([c])=>el.querySelector(c));if(fk&&!F[fk[1]].value.trim())return;
    if(el.matches('.lbio')){if(p.bio)out.push(`<p>${esc(p.bio)}</p>`);return}
    if(el.matches('.lsal')){out.push(`<p class="sal">${esc(salut(p))}</p>`);return}
    if(el.matches('.isig')){if(!skip){out.push('<div class="sig">');skip=true}out.push(`<p>${esc(el.textContent)}</p>`);return}
