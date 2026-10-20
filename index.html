@@ -3,7 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}#inst{position:fixed;left:16px;bottom:16px;z-index:60;all:unset;position:fixed;left:16px;bottom:16px;z-index:60;cursor:pointer;padding:11px 18px;border-radius:999px;background:#1D1D1F;color:#fff;font:600 .9rem system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.25)}</style>
 <title>مركز النعيم الثقافي والتراثي</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -323,6 +328,32 @@ p{margin:0}
 .acc .pf .bio{line-height:1.9}
 .acc .pf h4{font-size:.95rem;color:var(--hi);margin:14px 0 4px}
 .acc .pf .tx{color:var(--fg-2);line-height:1.9}
+.pdlg [hidden]{display:none!important}
+.padd{margin-top:18px;display:flex;justify-content:center}
+.addp{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:999px;border:1px dashed var(--fg-3);color:var(--fg-2);font-size:.95rem;transition:border-color .25s,color .25s,background .25s}
+.addp svg{width:16px;height:16px}
+.addp:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-soft)}
+.addp:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.pdlg{width:min(560px,calc(100vw - 32px));max-height:calc(100dvh - 40px);border:0;border-radius:16px;padding:0;background:var(--tile);color:var(--fg);box-shadow:0 30px 80px rgba(0,0,0,.35);text-align:right}
+.pdlg::backdrop{background:rgba(0,0,0,.45);backdrop-filter:blur(6px)}
+.pdlg[open]{animation:pin .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes pin{from{opacity:0;transform:translateY(14px) scale(.98)}}
+.pform{display:flex;flex-direction:column;gap:14px;padding:26px 26px 22px}
+.pform h3{font-size:1.35rem;font-weight:700}
+.pform label{display:flex;flex-direction:column;gap:6px;font-size:.88rem;color:var(--fg-2);font-weight:500}
+.pform input,.pform select,.pform textarea{font:inherit;font-size:1rem;color:var(--fg);background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px;resize:vertical}
+.pform input:focus,.pform select:focus,.pform textarea:focus{outline:2px solid var(--acc);outline-offset:0;border-color:transparent}
+.pnote{color:var(--fg-3);font-size:.88rem;margin-top:-6px}
+.perr{color:#D93025;font-size:.88rem;min-height:1.2em;margin:-4px 0}
+.pact{display:flex;gap:10px}
+.pbtn{all:unset;cursor:pointer;padding:11px 22px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-weight:600;font-size:.95rem}
+.pbtn.ghost{background:var(--bg-2);color:var(--fg)}
+.pbtn:focus-visible,.plink:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.pio{display:flex;gap:16px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px;font-size:.85rem;color:var(--fg-3)}
+.pio span{margin-inline-end:auto}
+.plink{all:unset;cursor:pointer;color:var(--acc);font-size:.88rem;font-weight:500;flex-direction:row!important}
+.acc .pchip.new::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--hi);margin-inline-start:7px;vertical-align:middle}
+.acc .pf .del{all:unset;cursor:pointer;margin-top:14px;color:#D93025;font-size:.88rem;font-weight:500}
 .acc .pf .xb{all:unset;cursor:pointer;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--line);color:var(--fg);flex:none;margin-inline-start:auto}
 .acc .pf .xb svg{width:15px;height:15px}
 .acc .pf .xb:focus-visible{outline:2px solid var(--acc)}
@@ -437,7 +468,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
     <div class="row4">
       <div><div class="n" data-to="9">٩</div><p class="l">مراحل</p></div>
       <div><div class="n" data-to="8">٨</div><p class="l">أقسام</p></div>
-      <div><div class="n" data-to="43">٤٣</div><p class="l">شخصية مؤسِّسة</p></div>
+      <div><div class="n" id="npeople" data-to="43">٤٣</div><p class="l">شخصية مؤسِّسة</p></div>
       <div><div class="n" data-to="9">٩</div><p class="l">أشهر للدراسة</p></div>
     </div>
   </div>
@@ -473,9 +504,31 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
 
 <section class="sec band c" id="people">
   <div class="inner">
-    <h2 class="h2">٤٣ شخصية. ١١ مجالاً.</h2>
+    <h2 class="h2" id="ph">٤٣ شخصية. ١١ مجالاً.</h2>
     <p class="sub">كل اسم يضيف خبرة أو علاقة أو ذاكرة.</p>
     <div class="acc" id="acc"></div>
+    <div class="padd"><button type="button" class="addp" id="addp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>إضافة شخصية</button></div>
+    <dialog class="pdlg" id="pdlg" aria-labelledby="pdlgT">
+      <form method="dialog" class="pform" id="plock" novalidate>
+        <h3 id="pdlgT">إضافة شخصية</h3>
+        <p class="pnote">هذه الخاصية للمشرف فقط.</p>
+        <label>كلمة السر<input type="password" id="ppass" autocomplete="current-password" required></label>
+        <p class="perr" id="plerr" role="alert"></p>
+        <div class="pact"><button type="submit" class="pbtn">دخول</button><button type="button" class="pbtn ghost" data-x>إلغاء</button></div>
+      </form>
+      <form class="pform" id="pform" hidden novalidate>
+        <h3>إضافة شخصية</h3>
+        <label>المجال<select id="pcat"></select></label>
+        <label id="pnewl" hidden>اسم المجال الجديد<input id="pnew" maxlength="80"></label>
+        <label>الاسم مع اللقب<input id="pname" maxlength="120" required placeholder="مثال: الأستاذ ..."></label>
+        <label>نبذة<textarea id="pbio" rows="3" maxlength="2000"></textarea></label>
+        <label>الدور المقترح في المشروع<textarea id="prole" rows="3" maxlength="2000"></textarea></label>
+        <label>أثر الحضور<textarea id="pimp" rows="2" maxlength="2000"></textarea></label>
+        <p class="perr" id="pferr" role="alert"></p>
+        <div class="pact"><button type="submit" class="pbtn">حفظ</button><button type="button" class="pbtn ghost" data-x>إلغاء</button></div>
+        <div class="pio"><span id="pcount"></span><button type="button" class="plink" id="pexp">تصدير المضافين</button><label class="plink">استيراد<input type="file" id="pimpf" accept="application/json,.json" hidden></label></div>
+      </form>
+    </dialog>
   </div>
 </section>
 
@@ -628,14 +681,55 @@ const TTL=/^(الأستاذ الدكتور|الأستاذة|الأستاذ ال�
 const XBP='<button type="button" class="xb" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>';
 const PLUS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
 const acc=$('#acc');
-acc.innerHTML=PEOPLE.map((c,ci)=>`<details><summary>${c.c}<span class="cnt">${ar(c.p.length)}</span>${PLUS}</summary><div class="chips">${c.p.map((p,pi)=>`<button type="button" class="pchip" aria-expanded="false" data-k="${ci}-${pi}">${p.n}</button>`).join('')}</div><div class="inl"><div></div></div></details>`).join('');
-$$('#acc .pchip').forEach(b=>b.addEventListener('click',()=>{const det=b.closest('details'),inl=det.querySelector('.inl'),on=b.getAttribute('aria-expanded')==='true';
+const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const PKEY='naeem-people-added',PHASH='1562c06edafaac1d873aa3a538cc8c8d49769b4a26696a53adfb11c2290a0be4';
+const loadAdded=()=>{try{const a=JSON.parse(localStorage.getItem(PKEY)||'[]');return Array.isArray(a)?a.filter(x=>x&&x.n&&x.c):[]}catch(e){return[]}};
+const saveAdded=a=>{try{localStorage.setItem(PKEY,JSON.stringify(a));return true}catch(e){return false}};
+let ADDED=loadAdded(),ALL=[];
+const merge=()=>{const all=PEOPLE.map(c=>({c:c.c,p:c.p.slice()}));ADDED.forEach(x=>{let g=all.find(c=>c.c===x.c);if(!g){g={c:x.c,p:[]};all.push(g)}g.p.push({n:x.n,bio:x.bio||'',role:x.role||'',impact:x.impact||'',id:x.id})});return all};
+const nInWords=n=>ar(n);
+function renderPeople(){
+  ALL=merge();const tot=ALL.reduce((s,c)=>s+c.p.length,0);
+  $('#ph').textContent=`${ar(tot)} شخصية. ${ar(ALL.length)} مجالاً.`;
+  const np=$('#npeople');if(np){const was=np.textContent===ar(np.dataset.to);np.dataset.to=tot;if(was||!window.gsap)np.textContent=ar(tot)}
+  const openCats=$$('#acc details[open]').map(d=>d.dataset.c);
+  acc.innerHTML=ALL.map((c,ci)=>`<details data-c="${esc(c.c)}"${openCats.includes(c.c)?' open':''}><summary>${esc(c.c)}<span class="cnt">${ar(c.p.length)}</span>${PLUS}</summary><div class="chips">${c.p.map((p,pi)=>`<button type="button" class="pchip${p.id?' new':''}" aria-expanded="false" data-k="${ci}-${pi}">${esc(p.n)}</button>`).join('')}</div><div class="inl"><div></div></div></details>`).join('');
+  $$('#acc .pchip').forEach(b=>b.addEventListener('click',()=>openProfile(b)));
+  if(window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),300);
+}
+function openProfile(b){const det=b.closest('details'),inl=det.querySelector('.inl'),on=b.getAttribute('aria-expanded')==='true';
   det.querySelectorAll('.pchip').forEach(x=>x.setAttribute('aria-expanded','false'));
   if(on){inl.classList.remove('open');return}
-  const [ci,pi]=b.dataset.k.split('-').map(Number);const c=PEOPLE[ci],p=c.p[pi];const her=/الأستاذة|الدكتورة/.test(p.n);
-  inl.firstElementChild.innerHTML=`<div class="pf"><div class="who"><span class="av">${p.n.replace(TTL,'').trim().charAt(0)}</span><div><p class="cat">${c.c}</p><h3>${p.n}</h3></div>${XBP}</div><p class="bio">${p.bio}</p><h4>الدور المقترح في المشروع</h4><p class="tx">${p.role}</p><h4>${her?'أثر حضورها':'أثر حضوره'}</h4><p class="tx">${p.impact}</p></div>`;
+  const [ci,pi]=b.dataset.k.split('-').map(Number);const c=ALL[ci],p=c.p[pi];const her=/الأستاذة|الدكتورة/.test(p.n);
+  const sec=(h,t)=>t?`<h4>${h}</h4><p class="tx">${esc(t)}</p>`:'';
+  inl.firstElementChild.innerHTML=`<div class="pf"><div class="who"><span class="av">${esc(p.n.replace(TTL,'').trim().charAt(0))}</span><div><p class="cat">${esc(c.c)}</p><h3>${esc(p.n)}</h3></div>${XBP}</div>${p.bio?`<p class="bio">${esc(p.bio)}</p>`:''}${sec('الدور المقترح في المشروع',p.role)}${sec(her?'أثر حضورها':'أثر حضوره',p.impact)}${p.id&&unlocked()?'<button type="button" class="del">حذف هذه الشخصية</button>':''}</div>`;
   inl.querySelector('.xb').addEventListener('click',()=>{inl.classList.remove('open');b.setAttribute('aria-expanded','false');b.focus()});
-  b.setAttribute('aria-expanded','true');inl.classList.add('open');if(window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),550)}));
+  const del=inl.querySelector('.del');if(del)del.addEventListener('click',()=>{if(!confirm('حذف «'+p.n+'»؟'))return;ADDED=ADDED.filter(x=>x.id!==p.id);saveAdded(ADDED);renderPeople()});
+  b.setAttribute('aria-expanded','true');inl.classList.add('open');if(window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),550)}
+renderPeople();
+/* add person */
+const dlg=$('#pdlg'),lockF=$('#plock'),addF=$('#pform');
+const unlocked=()=>{try{return sessionStorage.getItem('naeem-admin')==='1'}catch(e){return window.__nadm===1}};
+const setUnlocked=()=>{window.__nadm=1;try{sessionStorage.setItem('naeem-admin','1')}catch(e){}};
+async function sha(t){if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}return null}
+function fillCats(){const sel=$('#pcat');sel.innerHTML=ALL.map(c=>`<option>${esc(c.c)}</option>`).join('')+'<option value="__new">مجال جديد…</option>';$('#pnewl').hidden=true}
+function updCount(){$('#pcount').textContent=ADDED.length?`أضفت ${ar(ADDED.length)} على هذا الجهاز`:'لا توجد إضافات بعد'}
+function showForm(){lockF.hidden=true;addF.hidden=false;fillCats();updCount();$('#pferr').textContent='';setTimeout(()=>$('#pname').focus(),50)}
+$('#addp').addEventListener('click',()=>{lockF.reset();$('#plerr').textContent='';if(unlocked())showForm();else{addF.hidden=true;lockF.hidden=false}dlg.showModal();if(!unlocked())setTimeout(()=>$('#ppass').focus(),50)});
+dlg.addEventListener('click',e=>{if(e.target===dlg||e.target.closest('[data-x]'))dlg.close()});
+lockF.addEventListener('submit',async e=>{e.preventDefault();const v=$('#ppass').value;const h=await sha(v);if(h===PHASH){setUnlocked();showForm()}else{$('#plerr').textContent='كلمة السر غير صحيحة.';$('#ppass').select()}});
+$('#pcat').addEventListener('change',e=>{const n=e.target.value==='__new';$('#pnewl').hidden=!n;if(n)$('#pnew').focus()});
+addF.addEventListener('submit',e=>{e.preventDefault();const err=$('#pferr');
+  const c=($('#pcat').value==='__new'?$('#pnew').value:$('#pcat').value).trim(),n=$('#pname').value.trim();
+  if(!c){err.textContent='اكتب اسم المجال الجديد.';$('#pnew').focus();return}
+  if(n.length<3){err.textContent='اكتب اسم الشخصية.';$('#pname').focus();return}
+  if(ALL.some(g=>g.p.some(p=>p.n===n))){err.textContent='هذه الشخصية موجودة مسبقاً.';$('#pname').focus();return}
+  const rec={id:Date.now().toString(36),c,n,bio:$('#pbio').value.trim(),role:$('#prole').value.trim(),impact:$('#pimp').value.trim()};
+  ADDED.push(rec);if(!saveAdded(ADDED)){ADDED.pop();err.textContent='تعذّر الحفظ على هذا الجهاز.';return}
+  dlg.close();addF.reset();renderPeople();
+  const d=$$('#acc details').find(x=>x.dataset.c===c);if(d){d.open=true;const b=[...d.querySelectorAll('.pchip')].pop();b.click();setTimeout(()=>d.scrollIntoView({behavior:'smooth',block:'center'}),80)}});
+$('#pexp').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(ADDED,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='naeem-people-added.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)});
+$('#pimpf').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const a=JSON.parse(await f.text());if(!Array.isArray(a))throw 0;let k=0;a.forEach(x=>{if(x&&x.n&&x.c&&!ADDED.some(y=>y.n===x.n)&&!PEOPLE.some(g=>g.p.some(p=>p.n===x.n))){ADDED.push({id:x.id||Date.now().toString(36)+k,c:String(x.c),n:String(x.n),bio:String(x.bio||''),role:String(x.role||''),impact:String(x.impact||'')});k++}});saveAdded(ADDED);renderPeople();fillCats();updCount();$('#pferr').textContent=`تم استيراد ${ar(k)}.`}catch(_){$('#pferr').textContent='الملف غير صالح.'}e.target.value=''});
 
 /* statement: curtain lines + gold underline (Arabic split by lines only) */
 if(G){
@@ -648,7 +742,7 @@ if(G){
     if(window.DrawSVGPlugin)gsap.fromTo('#st .uline path',{drawSVG:'0%'},{drawSVG:'100%',duration:.8,ease:'power2.inOut',stagger:.25,delay:.9});
   };
   ScrollTrigger.create({trigger:'.state',start:'top 65%',once:true,onEnter:()=>document.fonts.ready.then(playSt)});
-  $$('.n').forEach(n=>{const o={v:0},to=+n.dataset.to;gsap.to(o,{v:to,duration:1.6,ease:'power3.out',scrollTrigger:{trigger:n,start:'top 88%',once:true},onUpdate:()=>n.textContent=ar(Math.round(o.v))})});
+  $$('.n').forEach(n=>{const o={v:0};gsap.to(o,{v:1,duration:1.6,ease:'power3.out',scrollTrigger:{trigger:n,start:'top 88%',once:true},onUpdate:()=>n.textContent=ar(Math.round(o.v*+n.dataset.to))})});
 }
 
 /* intro panel */
@@ -671,5 +765,7 @@ if(G){
 })();
 </script>
 
+<button type="button" id="inst" hidden>تثبيت كبرنامج على الكمبيوتر</button>
+<script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));let __ip;addEventListener("beforeinstallprompt",e=>{e.preventDefault();__ip=e;document.getElementById("inst").hidden=false});document.getElementById("inst").addEventListener("click",async()=>{if(!__ip)return;__ip.prompt();await __ip.userChoice;__ip=null;document.getElementById("inst").hidden=true});addEventListener("appinstalled",()=>document.getElementById("inst").hidden=true)</script>
 </body>
 </html>
