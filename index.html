@@ -136,17 +136,43 @@ p{margin:0}
 .ctrl button{all:unset;cursor:pointer;width:40px;height:40px;border-radius:50%;background:var(--line);display:grid;place-items:center;color:var(--fg)}
 .ctrl button:disabled{opacity:.35;cursor:default}
 .ctrl svg{width:18px;height:18px}
-.rail{display:grid;grid-template-columns:repeat(5,minmax(160px,1fr));gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-inline:max(20px,calc((100vw - 1000px)/2));margin-inline:calc(-1 * max(20px,env(safe-area-inset-left,0px)));scroll-padding-inline:max(20px,calc((100vw - 1000px)/2))}
-.rail::-webkit-scrollbar{display:none}
-.card{flex:0 0 clamp(170px,18vw,200px);scroll-snap-align:start;background:var(--tile);border-radius:14px;padding:14px 16px;min-height:120px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .5s}
-.card:hover{transform:scale(1.015)}
+.rail{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;max-width:1000px;margin-inline:auto;position:relative}
+@media (max-width:900px){.rail{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.card{cursor:pointer;background:var(--tile);border-radius:14px;padding:14px 16px;min-height:120px;display:flex;flex-direction:column;justify-content:space-between;text-align:right;position:relative;transition:transform .45s cubic-bezier(.25,.1,.25,1),box-shadow .35s}
+.card:hover{transform:translateY(-3px)}
+.card:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.card .ft{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.card .pl{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--line);color:var(--fg-2);flex:none}
+.card .pl svg{width:13px;height:13px}
+.card .full{display:none}
+.card .xb{all:unset;cursor:pointer;position:absolute;top:16px;left:16px;width:36px;height:36px;border-radius:50%;display:none;place-items:center;background:var(--line);color:var(--fg)}
+.card .xb svg{width:16px;height:16px}
+.card .xb:focus-visible{outline:2px solid var(--acc)}
+.card.big{position:absolute;inset:0;z-index:5;cursor:default;min-height:0;overflow:auto;justify-content:flex-start;box-shadow:var(--shadow),0 0 0 1.5px var(--acc);padding:clamp(18px,3vw,34px);transform:none;scrollbar-width:thin}
+.card.big .k{font-size:2.8rem}
+.card.big h3{font-size:1.6rem}
+.card.big .d,.card.big .ft{display:none}
+.card.big .full{display:block;margin-top:12px}
+.card.big .xb{display:grid}
+.card.ghost{visibility:hidden}
+.card .fh{color:var(--hi);font-weight:600;margin-bottom:6px}
+.det{font-size:1rem;line-height:1.9;color:var(--fg)}
+.det .lead{color:var(--fg-2);margin-bottom:10px}
+.det h4{font-size:.98rem;color:var(--hi);margin:12px 0 4px}
+.det ul{margin:0;padding:0 1.1em 0 0;display:grid;gap:2px}
+.det li::marker{color:var(--hi)}
+.det .pair{display:grid;gap:1px;margin-bottom:8px}
+.det .pair b{font-weight:600}
+.det .pair span{color:var(--fg-2)}
+.det .cols{columns:2 240px;column-gap:30px}
+.det .cols>*{break-inside:avoid}
 .card .k{font-size:1.9rem;font-weight:700;line-height:1}
 [data-skin="pro"] .card .k{color:var(--hi)}
 [data-skin="sand"] .card{box-shadow:var(--shadow)}
 [data-skin="sand"] .card .k{color:var(--acc)}
 .card h3{font-size:1.05rem;font-weight:600;margin-top:6px}
 .card .d{margin-top:6px;color:var(--fg-2);font-size:.85rem;line-height:1.55}
-.card .t{font-size:.78rem;margin-top:10px;color:var(--hi);font-weight:500}
+.card .t{font-size:.78rem;color:var(--hi);font-weight:500}
 
 /* bento */
 .grid8{margin-top:clamp(40px,6vw,60px);display:grid;grid-template-columns:repeat(4,1fr);gap:14px;text-align:right}
@@ -362,7 +388,6 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
 
 <section class="sec band alt" id="phases">
   <div class="inner"><div class="top"><h2 class="h2">المراحل.</h2>
-    <div class="ctrl"><button type="button" id="prev" aria-label="السابق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button><button type="button" id="next" aria-label="التالي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button></div>
   </div></div>
   <div class="rail" id="rail"></div>
 </section>
@@ -413,6 +438,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/DrawSVGPlugin.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/MotionPathPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/Flip.min.js"></script>
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
 <script>
 (function(){
@@ -434,15 +460,36 @@ $$('.sw button').forEach(b=>b.onclick=()=>skin(b.dataset.s));
 let saved=matchMedia('(prefers-color-scheme: dark)').matches?'pro':'light';try{saved=localStorage.getItem('naeemSkin')||saved}catch(e){}
 skin(saved);
 
-/* phases */
-const P=[['تشكيل الفريق','شهر','منسق عام ومجموعات عمل تحت مظلة مؤسسية.'],['خريطة المجتمع','شهر','حصر أصحاب الخبرة والذاكرة في سبع فئات.'],['اللقاءات التشاورية','٢–٣ أشهر','سبعة لقاءات، لكل محور أهل اختصاصه.'],['احتياجات الأقسام','شهران','بطاقة موحدة من عشرة بنود لكل قسم.'],['الاستراتيجية','شهر','اعتماد الأقسام والبرامج والفعاليات.'],['الوثيقة التأسيسية','شهر','ثلاثة عشر بنداً من الرؤية إلى مؤشرات النجاح.'],['التصور الهندسي','حسب الموقع','التصميم يتبع الاحتياج، لا يسبقه.'],['الشراكات والدعم','بالتوازي','جهات حكومية وسياحية وتعليمية وأهلية وخاصة.'],['التنفيذ المرحلي','بالتوازي','توثيق الذاكرة، برنامج ثقافي، أرشيف رقمي، ثم المقر الدائم.']];
+/* phases: each card grows to fill the grid with its full text (GSAP Flip) */
+const P=[
+ {t:'تشكيل الفريق',du:'شهر',d:'منسق عام ومجموعات عمل تحت مظلة مؤسسية.',full:'تشكيل فريق إدارة المشروع',lead:'الإجراءات المقترحة لتشكيل فريق عمل واضح الهيكل وخطة زمنية أولية لإدارة المشروع.',b:[{ul:['تشكيل فريق عمل للمشروع تحت مظلة إحدى المؤسسات ذات العلاقة في النعيم.','تحديد منسق عام للمشروع.','توزيع العمل على مجموعات أو محاور تخصصية.','إعداد جدول زمني لمراحل المشروع.','تحديد آلية للتوثيق وحفظ نتائج الاجتماعات والمقابلات.','إنشاء قاعدة بيانات بأسماء الشخصيات والكفاءات والمؤسسات ذات العلاقة بالمشروع.']}]},
+ {t:'خريطة المجتمع',du:'شهر',d:'حصر أصحاب الخبرة والذاكرة في سبع فئات.',full:'رسم خريطة المجتمع والمهتمين والمعنيين',lead:'قاعدة بيانات مجتمعية شاملة للكفاءات وأصحاب الخبرة والمهتمين بالمشروع.',cols:1,b:[{h:'أولاً: أهل التراث والذاكرة الشعبية',ul:['كبار السن.','الرواة والمهتمون بالتاريخ الشفهي.','العائلات التي تمتلك صوراً ووثائق ومقتنيات تاريخية.','الباحثون والمؤرخون.']},{h:'ثانياً: التراث البحري',ul:['القلاليف وصناع السفن.','البحارة وأصحاب الخبرة البحرية.','المهتمون بتاريخ الساحل والغوص وصيد الأسماك.','ملاك المقتنيات البحرية القديمة.']},{h:'ثالثاً: الفنون البصرية',ul:['المصورون الفوتوغرافيون.','الفنانون التشكيليون.','الرسامون.','المصممون.','المهتمون بالأرشفة البصرية.']},{h:'رابعاً: العمارة والهوية العمرانية',ul:['المهندسون المعماريون.','المصممون.','المهتمون بالعمارة البحرينية التقليدية.','المختصون في التصميم الداخلي والتراث العمراني.']},{h:'خامساً: الثقافة والأدب',ul:['الكتّاب والأدباء.','الشعراء.','الباحثون.','المهتمون بالمكتبات والتوثيق.']},{h:'سادساً: الحرف والمهن التقليدية',ul:['الحرفيون.','أصحاب الصناعات التقليدية.','المهتمون بإحياء المهن القديمة.']},{h:'سابعاً: الشباب والمجتمع',ul:['الشباب.','طلبة المدارس والجامعات.','المؤسسات الأهلية.','الفرق التطوعية.','المهتمون بالأنشطة الثقافية.']}]},
+ {t:'اللقاءات التشاورية',du:'٢–٣ أشهر',d:'سبعة لقاءات، لكل محور أهل اختصاصه.',full:'برنامج اللقاءات التشاورية',lead:'الاستماع المباشر إلى أصحاب الاختصاص والخبرة، وعدم الاكتفاء بالتصور النظري للمشروع. آلية التنفيذ: تنظيم سلسلة من اللقاءات التشاورية المتخصصة، بحيث يخصص كل لقاء لمحور معين.',cols:1,b:[{h:'أمثلة للقاءات',pairs:[['اللقاء الأول: النعيم والذاكرة التاريخية','يشارك فيه كبار السن والباحثون والمؤرخون وأصحاب الروايات الشعبية.'],['اللقاء الثاني: التراث البحري والقلافة وصناعة السفن','يشارك فيه القلاليف والبحارة والمهتمون بتاريخ البحر.'],['اللقاء الثالث: التصوير الفوتوغرافي والأرشيف البصري','يشارك فيه المصورون وأصحاب الصور التاريخية.'],['اللقاء الرابع: الفنون التشكيلية والرسم','يشارك فيه الفنانون والرسامون والنقاد والمهتمون بالفنون.'],['اللقاء الخامس: العمارة والهوية العمرانية','يشارك فيه المهندسون والمختصون بالتراث العمراني.'],['اللقاء السادس: الحرف التقليدية والاقتصاد الإبداعي','يشارك فيه الحرفيون وأصحاب المشاريع.'],['اللقاء السابع: الشباب ومستقبل المركز','يشارك فيه شباب المنطقة والمهتمون بالأنشطة الثقافية.']]}]},
+ {t:'احتياجات الأقسام',du:'شهران',d:'بطاقة موحدة من عشرة بنود لكل قسم.',full:'دراسة احتياجات كل قسم',lead:'بعد انتهاء اللقاءات التشاورية، يتم تشكيل مجموعات عمل لدراسة احتياجات كل قسم بصورة مستقلة. نموذج دراسة الاحتياجات لكل قسم: بطاقة عمل موحدة تشمل:',cols:1,b:[{pairs:[['١. تعريف القسم','ما هو دوره ورسالة وجوده داخل المركز؟'],['٢. المحتوى','ما الذي سيعرض أو يقدم للجمهور؟'],['٣. المقتنيات المطلوبة','ما هي الأدوات والصور والوثائق والنماذج المطلوبة؟'],['٤. المساحة','ما حجم المساحة المناسبة وطبيعة تصميمها؟'],['٥. التجهيزات','ما الاحتياجات الفنية والتقنية؟'],['٦. البرامج والفعاليات','ما الأنشطة التي يمكن تنفيذها بصورة مستمرة؟'],['٧. الموارد البشرية','من هم المختصون أو المتطوعون المطلوبون لإدارة القسم؟'],['٨. الشراكات','ما الجهات والمؤسسات والأفراد الذين يمكن التعاون معهم؟'],['٩. الاستدامة','كيف يمكن للقسم أن يستمر ويتطور مستقبلاً؟'],['١٠. الأولويات','ما الذي يجب تنفيذه في المرحلة الأولى، وما الذي يمكن تأجيله؟']]}]},
+ {t:'الاستراتيجية',du:'شهر',d:'اعتماد الأقسام والبرامج والفعاليات.',full:'إعداد استراتيجية الأقسام والفعاليات',lead:'بعد جمع نتائج اللقاءات ودراسات الاحتياجات، يتم إعداد استراتيجية متكاملة للمركز، تتضمن الأقسام المقترحة:',cols:1,b:[{h:'قسم تاريخ النعيم والذاكرة الشعبية',ul:['الروايات الشفوية.','الوثائق التاريخية.','صور النعيم القديمة.','الشخصيات والرواد.']},{h:'قسم التراث البحري والقلافة',ul:['نماذج السفن.','أدوات صناعة السفن.','تاريخ القلاليف.','تاريخ ساحل النعيم.']},{h:'معرض التصوير الفوتوغرافي',ul:['الصور التاريخية.','التصوير المعاصر.','أرشيف النعيم البصري.','المعارض الموسمية.']},{h:'قسم الفنون التشكيلية',ul:['معرض دائم.','معارض مؤقتة.','ورش فنية.','دعم الفنانين الشباب.']},{h:'قسم العمارة والهوية',ul:['العمارة التقليدية.','تطور عمران النعيم.','نماذج وتصاميم معمارية.']},{h:'قسم الحرف التقليدية',ul:['ورش حية.','عرض المنتجات.','تدريب الشباب.']},{h:'المكتبة ومركز الدراسات',ul:['تاريخ النعيم.','تاريخ البحرين.','التراث البحري.','الدراسات والبحوث.']},{h:'المسرح والساحة الثقافية',ul:['الندوات.','المحاضرات.','الأمسيات.','الفعاليات التراثية.','المهرجانات والأسواق الشعبية.']}]},
+ {t:'الوثيقة التأسيسية',du:'شهر',d:'ثلاثة عشر بنداً من الرؤية إلى مؤشرات النجاح.',full:'إعداد الوثيقة الاستراتيجية للمشروع',lead:'وثيقة تأسيسية متكاملة لمشروع مركز النعيم الثقافي والتراثي. بعد الانتهاء من المشاورات والدراسات، يتم جمع المخرجات في وثيقة استراتيجية موحدة تتضمن:',cols:1,b:[{ul:['رؤية المركز.','رسالته.','أهدافه.','هويته الثقافية.','الأقسام المقترحة.','احتياجات كل قسم.','البرامج والفعاليات.','الفئات المستهدفة.','الشراكات المحتملة.','الاحتياجات المكانية.','التصور المالي الأولي.','مراحل التنفيذ.','مؤشرات النجاح والاستدامة.']}]},
+ {t:'التصور الهندسي',du:'حسب الموقع',d:'التصميم يتبع الاحتياج، لا يسبقه.',full:'إعداد التصور المكاني والهندسي',lead:'بعد تحديد الاحتياجات الفعلية لكل قسم، تبدأ مرحلة إعداد التصور المكاني للمشروع. ويجب أن يكون التصميم الهندسي نتيجة لاحتياجات المشروع وليس سابقاً عليها، بحيث يتم تحديد:',cols:1,b:[{ul:['مساحة كل قسم.','العلاقة بين الأقسام.','مسارات الزوار.','مناطق المعارض.','الساحات المفتوحة.','الورش.','المخازن.','الإدارة.','المكتبة.','المسرح.','المرافق والخدمات.']},{p:'ويفضل إعداد أكثر من تصور بحسب مساحة الموقع المتاح.'}]},
+ {t:'الشراكات والدعم',du:'بالتوازي',d:'جهات حكومية وسياحية وتعليمية وأهلية وخاصة.',full:'بناء الشراكات والدعم',lead:'والهدف هو تحويل المشروع إلى مشروع مجتمعي تشاركي واسع وليس مبادرة معزولة. بالتوازي مع مراحل الدراسة، يبدأ التواصل مع الجهات المحتمل مساهمتها في المشروع، ومنها:',b:[{ul:['الجهات الحكومية المعنية بالثقافة والتراث.','الجهات السياحية.','المؤسسات الأهلية.','الشركات الوطنية.','الجامعات والمؤسسات التعليمية.','المهتمون بالتراث.','أصحاب الأعمال.','أبناء النعيم في مختلف التخصصات.']}]},
+ {t:'التنفيذ المرحلي',du:'بالتوازي',d:'توثيق الذاكرة، برنامج ثقافي، أرشيف رقمي، ثم المقر الدائم.',full:'التنفيذ المرحلي',lead:'لا يشترط انتظار اكتمال المبنى لبدء المشروع، بل يمكن إطلاق المشروع تدريجياً من خلال:',b:[{pairs:[['المرحلة الأولى: مشروع توثيق ذاكرة النعيم','جمع الصور والوثائق والروايات والمقتنيات.'],['المرحلة الثانية: إطلاق برنامج النعيم الثقافي','تنظيم ندوات ومعارض وورش مؤقتة.'],['المرحلة الثالثة: إنشاء أرشيف النعيم الرقمي','توثيق المحتوى وحفظه إلكترونياً.'],['المرحلة الرابعة: إقامة فعاليات تراثية دورية','لإشراك المجتمع وتعريف الجمهور بالمشروع.'],['المرحلة الخامسة: تنفيذ المركز الدائم','بعد اكتمال الدراسات والتصورات والشراكات والدعم.']]}]}
+];
+const PLP='<span class="pl" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>';
+function det(p){let h=`<div class="det"><p class="lead">${p.lead}</p><div class="${p.cols?'cols':''}">`;
+  p.b.forEach(b=>{let x='<div>';if(b.h)x+=`<h4>${b.h}</h4>`;if(b.ul)x+='<ul>'+b.ul.map(i=>`<li>${i}</li>`).join('')+'</ul>';if(b.pairs)x+=b.pairs.map(([a,c])=>`<div class="pair"><b>${a}</b><span>${c}</span></div>`).join('');if(b.p)x+=`<p style="margin-top:8px">${b.p}</p>`;h+=x+'</div>'});
+  return h+'</div></div>'}
+if(window.gsap&&window.Flip)gsap.registerPlugin(Flip);
 const rail=$('#rail');
-P.forEach((p,i)=>rail.insertAdjacentHTML('beforeend',`<article class="card"><div><div class="k">${ar(i+1)}</div><h3>${p[0]}</h3><p class="d">${p[2]}</p></div><span class="t">${p[1]}</span></article>`));
-const step=()=>rail.querySelector('.card').offsetWidth+18;
-$('#next').onclick=()=>rail.scrollBy({left:-step(),behavior:'smooth'});
-$('#prev').onclick=()=>rail.scrollBy({left:step(),behavior:'smooth'});
-function ctl(){const m=rail.scrollWidth-rail.clientWidth,x=Math.abs(rail.scrollLeft);document.querySelector('#phases .ctrl').hidden=m<4;$('#prev').disabled=x<4;$('#next').disabled=x>m-4}
-rail.addEventListener('scroll',ctl,{passive:true});addEventListener('resize',ctl);ctl();
+P.forEach((p,i)=>{const b=document.createElement('article');b.className='card';b.tabIndex=0;b.setAttribute('role','button');b.setAttribute('aria-label',`${p.full}: اضغط لقراءة التفاصيل`);
+ b.innerHTML=`<div><div class="k">${ar(i+1)}</div><h3>${p.t}</h3><p class="d">${p.d}</p></div><div class="ft"><span class="t">${p.du}</span>${PLP}</div><div class="full"><p class="fh">${p.full}</p>${det(p)}</div><button type="button" class="xb" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>`;
+ b.setAttribute('data-lenis-prevent','');
+ let ph=null;
+ const open=()=>{if(b.classList.contains('big'))return;$$('#rail .card.big').forEach(c=>c._close&&c._close(true));
+   const st=window.Flip&&!reduce?Flip.getState(b):null;ph=b.cloneNode(true);ph.classList.add('ghost');ph.removeAttribute('tabindex');ph.setAttribute('aria-hidden','true');b.after(ph);
+   b.classList.add('big');b.removeAttribute('role');rail.style.minHeight=Math.max(rail.offsetHeight,560)+'px';
+   if(st)Flip.from(st,{duration:.7,ease:'power3.inOut',absolute:true});b.scrollTop=0;b.querySelector('.xb').focus({preventScroll:true});if(window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),750)};
+ b._close=(quick)=>{if(!b.classList.contains('big'))return;const st=window.Flip&&!reduce&&!quick?Flip.getState(b):null;b.classList.remove('big');b.setAttribute('role','button');ph&&ph.remove();ph=null;rail.style.minHeight='';if(st)Flip.from(st,{duration:.6,ease:'power3.inOut'});if(!quick)b.focus({preventScroll:true});if(window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),650)};
+ b.addEventListener('click',e=>{if(e.target.closest('.xb')){e.stopPropagation();b._close();return}if(!b.classList.contains('big'))open()});
+ b.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target===b&&!b.classList.contains('big')){e.preventDefault();open()}if(e.key==='Escape')b._close()});
+ rail.append(b)});
 
 /* departments */
 const ic={mem:'<path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M8 9h8M8 13h6"/>',cam:'<rect x="3" y="7" width="18" height="13" rx="3"/><circle cx="12" cy="13.5" r="3.5"/><path d="M8 7l1.5-3h5L16 7"/>',art:'<path d="M12 3a9 9 0 1 0 0 18c1 0 1.5-.8 1.5-1.6 0-1.2-1-1.6-1-2.6 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4C21 6.4 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/>',arc:'<path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9.5 21v-5.5a2.5 2.5 0 0 1 5 0V21"/>',craft:'<path d="M7 21h10l-1-6H8z"/><path d="M8 15c-1.5-2-1.5-5 0-7h8c1.5 2 1.5 5 0 7"/><path d="M9 8c0-2 1-4 3-5 2 1 3 3 3 5"/>',lib:'<path d="M4 19V5a1 1 0 0 1 1-1h4v15H5a1 1 0 0 1-1-1z"/><path d="M9 4h4v15H9z"/><path d="m14 5 3.8-1 3 14-3.8 1z"/>',stage:'<path d="M3 4h18v3c-3 0-4 3-9 3S6 7 3 7z"/><path d="M5 10v10M19 10v10M3 20h18"/>'};
