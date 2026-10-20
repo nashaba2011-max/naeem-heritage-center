@@ -83,6 +83,11 @@ p{margin:0}
 .intro .iq{margin:4px 0 16px;padding:0 1.2em 0 0;display:grid;gap:4px;font-weight:600}
 .intro .iq li::marker{color:var(--hi)}
 .intro .iquote{font-weight:700;font-size:1.15rem;color:var(--hi);margin-top:18px}
+.intro .iback{display:flex;justify-content:center;margin-top:30px;padding-top:24px;border-top:1px solid var(--line)}
+.intro .iback button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:11px 26px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-weight:500}
+.intro .iback button:hover{filter:brightness(1.1)}
+.intro .iback button:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.intro .iback svg{width:16px;height:16px}
 .intro .isig{color:var(--fg-3);font-size:.95rem;margin-top:22px}
 .intro .ix{all:unset;cursor:pointer;float:left;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--line);color:var(--fg)}
 .intro .ix svg{width:16px;height:16px}
@@ -317,6 +322,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
         <p class="iquote">النعيم ليست مجرد مكان نروي تاريخه، وإنما ذاكرة نعيد اكتشافها، وهوية نصونها، ومستقبل ثقافي نشارك في بنائه.</p>
         <p>وتفضلوا بقبول فائق الاحترام والتقدير،،،</p>
         <p class="isig">عمار أحمد النشابة</p>
+        <div class="iback"><button type="button" id="introBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>رجوع</button></div>
       </article>
     </div></div>
   </div>
@@ -486,6 +492,7 @@ if(G){
  function setOpen(o){box.classList.toggle('open',o);btn.setAttribute('aria-expanded',String(o));if(o){if(window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),750)}}
  btn.addEventListener('click',()=>setOpen(!box.classList.contains('open')));
  $('#introClose').addEventListener('click',()=>{setOpen(false);btn.focus()});
+ $('#introBack').addEventListener('click',()=>{const t=btn.closest('.hero')||btn;if(lenis)lenis.scrollTo(t,{offset:-48,duration:1.1});else t.scrollIntoView({behavior:reduce?'auto':'smooth'});setTimeout(()=>{setOpen(false);btn.focus({preventScroll:true})},reduce?0:700)});
  art.setAttribute('data-lenis-prevent','');
 })();
 })();
