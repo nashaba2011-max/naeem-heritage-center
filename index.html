@@ -479,7 +479,7 @@ function det(p){let h=`<div class="det"><p class="lead">${p.lead}</p><div class=
 if(window.gsap&&window.Flip)gsap.registerPlugin(Flip);
 const rail=$('#rail');
 P.forEach((p,i)=>{const b=document.createElement('article');b.className='card';b.tabIndex=0;b.setAttribute('role','button');b.setAttribute('aria-label',`${p.full}: اضغط لقراءة التفاصيل`);
- b.innerHTML=`<div><div class="k">${ar(i+1)}</div><h3>${p.t}</h3><p class="d">${p.d}</p></div><div class="ft"><span class="t">${p.du}</span>${PLP}</div><div class="full"><p class="fh">${p.full}</p>${det(p)}</div><button type="button" class="xb" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>`;
+ b.innerHTML=`<div><div class="k">${ar(i+1)}</div><h3>${p.t}</h3><p class="d">${p.d}</p></div><div class="ft"><span></span>${PLP}</div><div class="full"><p class="fh">${p.full}</p>${det(p)}</div><button type="button" class="xb" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>`;
  b.setAttribute('data-lenis-prevent','');
  let ph=null;
  const open=()=>{if(b.classList.contains('big'))return;$$('#rail .card.big').forEach(c=>c._close&&c._close(true));
