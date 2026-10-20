@@ -327,9 +327,11 @@ p{margin:0}
 .inv .pbtn[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
 .inv .invh{margin:0;color:var(--fg-3);font-size:.85rem}
 .inv .invx{color:var(--fg-3);font-size:.8rem;font-weight:400}
+.inv .invt2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.inv .invt2 .invd{grid-column:1/-1;margin-top:-6px}
 .inv .invd{color:#8A4B22;font-size:.88rem;font-weight:600;min-height:1.3em}
 [data-skin="pro"] .inv .invd{color:#C98552}
-.intro.adm .lspon,.intro.adm .lco,.intro.adm .ldate,.intro.adm .lwhen,.intro.adm .lwhere{cursor:pointer;border-bottom:1px dashed currentColor}
+.intro.adm .lspon,.intro.adm .lco,.intro.adm .ldate,.intro.adm .lwhen,.intro.adm .ltime,.intro.adm .lwhere{cursor:pointer;border-bottom:1px dashed currentColor}
 .intro.adm .lset,.intro .lset{color:var(--hi);font-weight:700;border-bottom:0}
 .intro .lfill{color:var(--hi);font-weight:700}
 @media (max-width:560px){.inv .invg{grid-template-columns:1fr}}
@@ -669,7 +671,8 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
   <div class="invg">
     <label class="invw">بالتنسيق مع<input id="invCo"></label>
     <label>التاريخ<input id="invDate" type="date"><span class="invx invd" id="invDateTx"></span></label>
-    <label>موعد الاجتماع<input id="invWhen" type="datetime-local"><span class="invx invd" id="invWhenTx"></span></label>
+    <label>موعد الاجتماع<input id="invWhen" type="date"><span class="invx invd" id="invWhenTx"></span></label>
+    <div class="invw invt2"><label>الوقت من<input id="invTf" type="time"></label><label>إلى<input id="invTt" type="time"></label><span class="invx invd" id="invTimeTx"></span></div>
     <label class="invw">المكان<input id="invWhere"></label>
   </div>
   <div class="invb"><button type="button" class="pbtn" id="invPdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>حفظ الدعوة PDF</button><p class="invh" id="invHint">في نافذة الطباعة اختر «حفظ كـ PDF».</p></div>
@@ -725,6 +728,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
 <p class="isig">بالتنسيق مع (<span class="lco">...........................</span>)</p>
 <p class="isig">التاريخ: <span class="ldate">............................</span></p>
 <p class="isig">موعد الاجتماع: <span class="lwhen">............................</span></p>
+<p class="isig">الوقت: <span class="ltime">............................</span></p>
 <p class="isig">المكان: <span class="lwhere">............................</span></p>
 <div class="iback"><button type="button" class="xback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>رجوع</button></div></article>
     </div></div>
@@ -1029,12 +1033,15 @@ if(G){
 
 /* invitation letter: pick a person, save as PDF */
 (function(){const art=$('#x4'),sel=$('#invName');if(!art||!sel)return;
- const F={spon:$('#invSpon'),co:$('#invCo'),date:$('#invDate'),when:$('#invWhen'),where:$('#invWhere')};
+ const F={spon:$('#invSpon'),co:$('#invCo'),date:$('#invDate'),when:$('#invWhen'),tf:$('#invTf'),tt:$('#invTt'),where:$('#invWhere')};
  try{const v=JSON.parse(localStorage.getItem('naeem-invite')||'{}');Object.keys(F).forEach(k=>{if(v[k])F[k].value=v[k]})}catch(e){}
  const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
  if(!/^\d{4}-\d\d-\d\d$/.test(F.date.value))F.date.value=iso(new Date());
- if(F.when.value&&!/^\d{4}-\d\d-\d\dT\d\d:\d\d/.test(F.when.value))F.when.value='';
- const fmtD=v=>{const m=v.match(/^(\d{4})-(\d\d)-(\d\d)(?:T(\d\d):(\d\d))?/);if(!m)return v;const d=new Date(+m[1],m[2]-1,+m[3]);const ds=`${+m[3]}.${+m[2]}.${m[1]}`.replace(/^(\d)\./,'0$1.').replace(/\.(\d)\./,'.0$1.');if(!m[4])return ds;const DAYS=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];let h=+m[4];const ap=h<12?'صباحاً':'مساءً';h=h%12||12;return `${DAYS[d.getDay()]} ${ds} – الساعة ${h}:${m[5]} ${ap}`};
+ if(F.when.value){const mm=F.when.value.match(/^\d{4}-\d\d-\d\d/);F.when.value=mm?mm[0]:''}
+ const DAYS=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+ const fmtD=(v,day)=>{const m=v.match(/^(\d{4})-(\d\d)-(\d\d)/);if(!m)return v;const ds=`${m[3]}.${m[2]}.${m[1]}`;return day?`${DAYS[new Date(+m[1],m[2]-1,+m[3]).getDay()]} ${ds}`:ds};
+ const t12=v=>{const m=v.match(/^(\d\d):(\d\d)/);if(!m)return null;const h=+m[1];return{t:`${h%12||12}.${m[2]}`,ap:h<12?'صباحاً':'مساءً'}};
+ const fmtT=()=>{const a=t12(F.tf.value),b=t12(F.tt.value);if(!a)return'';if(!b)return `${a.t} ${a.ap}`;return a.ap===b.ap?`${a.t} إلى ${b.t} ${b.ap}`:`${a.t} ${a.ap} إلى ${b.t} ${b.ap}`};
  const save=()=>{try{const v={};Object.keys(F).forEach(k=>v[k]=F[k].value);localStorage.setItem('naeem-invite',JSON.stringify(v))}catch(e){}};
  function fill(){const cur=sel.value;sel.innerHTML='<option value="">اختر من قائمة الشخصيات…</option>'+ALL.map(g=>`<optgroup label="${esc(g.c)}">${g.p.map(p=>`<option value="${esc(p.key)}"${p.key===cur?' selected':''}>${esc(p.n)}</option>`).join('')}</optgroup>`).join('')}
  const person=()=>{const f=sel.value&&findP(sel.value);return f?f.p:null};
@@ -1044,10 +1051,10 @@ if(G){
  function sync(){const p=person();
   art.querySelector('.lsal').innerHTML=p?esc(salut(p)).replace(esc(p.n),`<span class="lfill">${esc(p.n)}</span>`):esc(salut(null));
   const bio=art.querySelector('.lbio'),bh=art.querySelector('.lbioh');bio.textContent=p&&p.bio||'';bio.hidden=!(p&&p.bio);bh.hidden=!!p;
-  art.querySelector('.lspon').textContent=val('spon','............');[['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).classList.toggle('lset',!!F[k].value.trim()));art.querySelector('.lco').textContent=val('co','...........................');
-  art.querySelector('.ldate').textContent=F.date.value?fmtD(F.date.value):dots;art.querySelector('.lwhen').textContent=F.when.value?fmtD(F.when.value):dots;$('#invDateTx').textContent=F.date.value?fmtD(F.date.value):'';$('#invWhenTx').textContent=F.when.value?fmtD(F.when.value):'';art.querySelector('.lwhere').textContent=val('where',dots);
+  art.querySelector('.lspon').textContent=val('spon','............');[['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.ltime','tf'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).classList.toggle('lset',!!F[k].value.trim()));art.querySelector('.lco').textContent=val('co','...........................');
+  art.querySelector('.ldate').textContent=F.date.value?fmtD(F.date.value):dots;art.querySelector('.lwhen').textContent=F.when.value?fmtD(F.when.value,1):dots;$('#invDateTx').textContent=F.date.value?fmtD(F.date.value):'';$('#invWhenTx').textContent=F.when.value?fmtD(F.when.value,1):'';const tm=fmtT();art.querySelector('.ltime').textContent=tm||dots;$('#invTimeTx').textContent=tm;art.querySelector('.lwhere').textContent=val('where',dots);
   $('#invPdf').setAttribute('aria-disabled',String(!p))}
- [['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).addEventListener('click',()=>{if(!unlocked())return;F[k].scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>F[k].focus({preventScroll:true}),350)}));
+ [['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.ltime','tf'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).addEventListener('click',()=>{if(!unlocked())return;F[k].scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>F[k].focus({preventScroll:true}),350)}));
  sel.addEventListener('focus',fill);sel.addEventListener('pointerdown',fill);sel.addEventListener('change',sync);
  Object.values(F).forEach(i=>{i.addEventListener('input',()=>{sync();save()});i.addEventListener('change',()=>{sync();save()})});
  fill();sync();
@@ -1059,7 +1066,7 @@ if(G){
   [...art.children].forEach(el=>{
    if(el.matches('.ix,.ibism,.ik,h2,.inv,.iback'))return;
    if(el.matches('.lbioh'))return;
-   const fk=[['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.lwhere','where']].find(([c])=>el.querySelector(c));if(fk&&!F[fk[1]].value.trim())return;
+   const fk=[['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.ltime','tf'],['.lwhere','where']].find(([c])=>el.querySelector(c));if(fk&&!F[fk[1]].value.trim())return;
    if(el.matches('.lbio')){if(p.bio)out.push(`<p>${esc(p.bio)}</p>`);return}
    if(el.matches('.lsal')){out.push(`<p class="sal">${esc(salut(p))}</p>`);return}
    if(el.matches('.isig')){if(!skip){out.push('<div class="sig">');skip=true}out.push(`<p>${esc(el.textContent)}</p>`);return}
