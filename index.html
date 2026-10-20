@@ -308,6 +308,12 @@ p{margin:0}
 /* people extra fields */
 .inv{margin:6px 0 30px;padding:20px;border-radius:14px;background:var(--bg);border:1.5px solid #8A4B22;display:flex;flex-direction:column;gap:14px}
 [data-skin="pro"] .inv{border-color:#C98552}
+.invlock{margin:6px 0 30px;padding:18px 20px;border-radius:14px;border:1.5px dashed #8A4B22;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+[data-skin="pro"] .invlock{border-color:#C98552}
+.invlock p{margin:0!important;color:var(--fg-2);font-size:.95rem}
+.invlock .pbtn{display:inline-flex;align-items:center;gap:8px}
+.invlock .pbtn svg{width:17px;height:17px}
+.intro .inv[hidden],.intro .invlock[hidden]{display:none}
 .inv .invt{font-weight:700;margin:0;color:var(--fg)}
 .inv label{display:flex;flex-direction:column;gap:6px;font-size:.86rem;color:var(--fg-2);font-weight:500}
 .inv select,.inv input{font:inherit;font-size:1rem;color:var(--fg);background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
@@ -320,8 +326,8 @@ p{margin:0}
 .inv .pbtn[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
 .inv .invh{margin:0;color:var(--fg-3);font-size:.85rem}
 .inv .invx{color:var(--fg-3);font-size:.8rem;font-weight:400}
-.intro .lspon,.intro .lco,.intro .ldate,.intro .lwhen,.intro .lwhere{cursor:pointer;border-bottom:1px dashed currentColor}
-.intro .lset{color:var(--hi);font-weight:700;border-bottom:0}
+.intro.adm .lspon,.intro.adm .lco,.intro.adm .ldate,.intro.adm .lwhen,.intro.adm .lwhere{cursor:pointer;border-bottom:1px dashed currentColor}
+.intro.adm .lset,.intro .lset{color:var(--hi);font-weight:700;border-bottom:0}
 .intro .lfill{color:var(--hi);font-weight:700}
 @media (max-width:560px){.inv .invg{grid-template-columns:1fr}}
 @media print{
@@ -652,7 +658,8 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
 <p class="iquote">فالتراث الذي نحييه اليوم هو الرسالة التي نتركها لأبنائنا غداً، والذاكرة التي نحفظها هي الأثر الذي يبقى شاهداً على من صنعوا تاريخنا.</p>
 <div class="iback"><button type="button" class="xback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>رجوع</button></div></article>
 <article class="intro xa" id="x4" hidden aria-label="نموذج لرسالة الدعوة"><button type="button" class="ix" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><p class="ibism">بسم الله الرحمن الرحيم</p><p class="ik">نموذج من رسالة الدعوة</p><h2>دعوة لحضور المؤتمر التأسيسي لمشروع مركز النعيم الثقافي والتراثي</h2>
-<div class="inv" id="inv">
+<div class="invlock" id="invLock"><p>تجهيز الدعوة وحفظها PDF خاص بالمشرف.</p><button type="button" class="pbtn" id="invOpen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>دخول المشرف لتجهيز الدعوة</button></div>
+<div class="inv" id="inv" hidden>
   <p class="invt">جهّز الدعوة لشخصية محددة</p>
   <label class="invw">اسم المدعو<select id="invName"><option value="">اختر من قائمة الشخصيات…</option></select></label>
   <label class="invw">الجهة التي وافقت على تبنّي المشروع ورعايته<input id="invSpon" placeholder="مثال: مركز تمكين شباب النعيم"><span class="invx">تُكتب في: «وقد حظيت فكرة المشروع بموافقة (…) على تبنيها ورعايتها»</span></label>
@@ -909,7 +916,7 @@ function renderPeople(){
   const openCats=$$('#acc details[open]').map(d=>d.dataset.c);
   acc.innerHTML=ALL.map((c,ci)=>`<details data-c="${esc(c.c)}"${openCats.includes(c.c)?' open':''}><summary>${esc(c.c)}<span class="cnt">${ar(c.p.length)}</span>${PLUS}</summary><div class="chips">${c.p.map(p=>`<button type="button" class="pchip${p.nw?' new':p.ed&&unlocked()?' ed':''}" aria-expanded="false" data-key="${esc(p.key)}">${esc(p.n)}</button>`).join('')}</div><div class="inl"><div></div></div></details>`).join('');
   $$('#acc .pchip').forEach(b=>b.addEventListener('click',()=>openProfile(b)));
-  $('#plogout').hidden=!unlocked();
+  $('#plogout').hidden=!unlocked();document.dispatchEvent(new Event('naeem-admin'));
   if(window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),300);
 }
 const isHer=n=>/الأستاذة|الدكتورة/.test(n);
@@ -1034,10 +1041,13 @@ if(G){
   art.querySelector('.lspon').textContent=val('spon','............');[['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).classList.toggle('lset',!!F[k].value.trim()));art.querySelector('.lco').textContent=val('co','...........................');
   art.querySelector('.ldate').textContent=val('date',dots);art.querySelector('.lwhen').textContent=val('when',dots);art.querySelector('.lwhere').textContent=val('where',dots);
   $('#invPdf').setAttribute('aria-disabled',String(!p))}
- [['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).addEventListener('click',()=>{F[k].scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>F[k].focus({preventScroll:true}),350)}));
+ [['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).addEventListener('click',()=>{if(!unlocked())return;F[k].scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>F[k].focus({preventScroll:true}),350)}));
  sel.addEventListener('focus',fill);sel.addEventListener('pointerdown',fill);sel.addEventListener('change',sync);
  Object.values(F).forEach(i=>i.addEventListener('input',()=>{sync();save()}));
  fill();sync();
+ function gate(){const on=unlocked();art.classList.toggle('adm',on);$('#inv').hidden=!on;$('#invLock').hidden=on;if(!on&&sel.value){sel.value='';sync()}}
+ document.addEventListener('naeem-admin',gate);gate();
+ $('#invOpen').addEventListener('click',()=>askPass(()=>{gate();fill();setTimeout(()=>sel.focus(),100)}));
  function letterHTML(p){const out=[];let skip=false;
   out.push('<p class="lb">بسم الله الرحمن الرحيم</p>');out.push(`<h1>${esc(art.querySelector('h2').textContent)}</h1>`);
   [...art.children].forEach(el=>{
@@ -1048,7 +1058,7 @@ if(G){
    if(el.matches('.isig')){if(!skip){out.push('<div class="sig">');skip=true}out.push(`<p>${esc(el.textContent)}</p>`);return}
    out.push(el.outerHTML)});
   if(skip)out.push('</div>');return out.join('')}
- $('#invPdf').addEventListener('click',()=>{const p=person();if(!p){$('#invHint').textContent='اختر اسم المدعو أولاً.';sel.focus();return}
+ $('#invPdf').addEventListener('click',()=>{if(!unlocked()){gate();return}const p=person();if(!p){$('#invHint').textContent='اختر اسم المدعو أولاً.';sel.focus();return}
   $('#invHint').textContent='في نافذة الطباعة اختر «حفظ كـ PDF».';
   let el=$('#prt');if(!el){el=document.createElement('div');el.id='prt';document.body.appendChild(el)}
   el.className='letter';el.innerHTML=PG(letterHTML(p));
