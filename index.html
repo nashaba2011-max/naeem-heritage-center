@@ -242,6 +242,19 @@ p{margin:0}
 .court .r{fill:var(--court);stroke-dasharray:6 6}
 .mpath{fill:none;stroke:var(--acc);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:2 10}
 .walker{fill:var(--acc)}
+.minfo.full{display:block;background:var(--bg);border-radius:12px;padding:20px 22px;box-shadow:inset 0 0 0 1.5px var(--acc);text-align:right}
+[data-skin="pro"] .minfo.full{background:#000}
+.minfo.full .mh{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:6px}
+.minfo.full .mh .sub2{color:var(--hi);font-weight:600;font-size:.9rem}
+.minfo.full h3{font-size:1.35rem;font-weight:700}
+.minfo.full .xb{all:unset;cursor:pointer;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--line);color:var(--fg);flex:none}
+.minfo.full .xb svg{width:15px;height:15px}
+.minfo.full .xb:focus-visible{outline:2px solid var(--acc)}
+.minfo.full .det{font-size:.95rem}
+.minfo.full .det .cols{columns:3 200px;column-gap:28px}
+.minfo.full .det .cols>*{break-inside:avoid}
+.mfold{display:grid;grid-template-rows:1fr;transition:grid-template-rows .55s cubic-bezier(.25,.1,.25,1)}
+.mfold>div{overflow:hidden}
 .minfo{margin-top:16px;display:grid;grid-template-columns:auto 1fr;gap:2px 16px;align-items:center;text-align:right}
 .minfo .no{grid-row:span 2;width:44px;height:44px;border-radius:50%;background:var(--acc);color:var(--on-acc);display:grid;place-items:center;font-weight:700}
 .minfo h3{font-size:1.15rem;font-weight:600}
@@ -260,7 +273,7 @@ p{margin:0}
 .plane{position:relative;width:min(640px,84vw);aspect-ratio:800/560;transform-style:preserve-3d;transform:rotateX(55deg) rotateZ(-28deg)}
 .floor{position:absolute;inset:0;background:var(--bg-2);border:2px solid var(--wall);border-radius:8px}
 .room{position:absolute;transform-style:preserve-3d;cursor:pointer;outline:none}
-.room .top3{position:absolute;inset:0;border-radius:6px;background:var(--room);color:var(--fg);border:1.5px solid var(--wall);display:grid;place-items:center;text-align:center;font-weight:600;font-size:clamp(.58rem,.45rem + .5vw,.88rem);line-height:1.3;padding:4px;transform:translateZ(var(--h,24px));transition:transform .55s cubic-bezier(.25,.1,.25,1),background .3s,border-color .3s,color .3s}
+.room .top3{position:absolute;inset:0;border-radius:6px;background:var(--room);color:var(--fg);border:1.5px solid var(--wall);display:grid;place-items:center;text-align:center;font-weight:700;font-size:clamp(.72rem,.55rem + .75vw,1.15rem);line-height:1.3;padding:4px;transform:translateZ(var(--h,24px));transition:transform .55s cubic-bezier(.25,.1,.25,1),background .3s,border-color .3s,color .3s}
 .room .wallS{position:absolute;inset:0;border-radius:6px;background:color-mix(in srgb,var(--wall) 70%,transparent);transform:translateZ(calc(var(--h,24px)/2))}
 .room .shadow{position:absolute;inset:4%;border-radius:6px;background:rgba(0,0,0,.18);filter:blur(10px);transform:translateZ(1px)}
 .room.seen .top3{background:var(--room-h)}
@@ -546,22 +559,31 @@ const ENT=['المدخل والاستقبال','نقطة البداية: تعر�
 const RM=[[600,190,180,180,0,46],[560,20,220,170,1,70],[300,20,260,170,2,40],[20,20,280,170,3,50],[20,190,180,180,4,36],[20,370,280,170,5,30],[300,370,260,170,6,44],[200,190,400,180,7,4],[560,370,220,170,-1,22]];
 const plane=$('#plane'),minfo=$('#minfo');
 if(window.MotionPathPlugin&&window.gsap)gsap.registerPlugin(MotionPathPlugin);
-function showZ(i){const t=i<0?ENT:D[i];minfo.innerHTML=`<span class="no">${i<0?'⌂':ar(i+1)}</span><h3>${t[0]}</h3><p>${t[1]}</p>`;$$('.room').forEach(r=>r.classList.toggle('on',+r.dataset.i===i))}
+const RD=[1,0,2,3,4,5,6,7];
+const XBM='<button type="button" class="xb" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>';
+function roomDef(i){if(i<0)return `<div class="mh"><div><p class="sub2">المدخل</p><h3>${ENT[0]}</h3></div></div><p style="color:var(--fg-2)">${ENT[1]}</p>`;
+  const d=DEP[RD[i]];return `<div class="mh"><div><p class="sub2">القاعة ${ar(i+1)}</p><h3>${d.n}</h3></div>${XBM}</div><div class="det"><div class="cols"><div><h4>محتوى القسم</h4><ul>${d.it.map(x=>`<li>${x}</li>`).join('')}</ul></div>${d.mt?`<div><h4>اللقاء التشاوري</h4><div class="pair"><b>${d.mt[0]}</b><span>${d.mt[1]}</span></div></div>`:''}<div><h4>أصحاب الخبرة: ${d.gr[0]}</h4><ul>${d.gr[1].map(x=>`<li>${x}</li>`).join('')}</ul></div></div></div>`}
+let camT=null;
+function focusOn(i){if(i<0||!window.gsap||reduce)return;const r=RM.find(x=>x[4]===i);const cx=(r[0]+r[2]/2)/800-.5,cy=(r[1]+r[3]/2)/560-.5;const pw=plane.offsetWidth,ph=plane.offsetHeight;stopSpin();
+  const o={rx,rz,tx:camX,ty:camY};camT&&camT.kill();camT=gsap.to(o,{rx:42,rz:-28-cx*30,tx:-cx*pw*.55,ty:-cy*ph*.35,duration:.9,ease:'power3.inOut',onUpdate(){rx=o.rx;rz=o.rz;camX=o.tx;camY=o.ty;setRot()}})}
+function unfocus(){if(!window.gsap||reduce){rx=55;rz=-28;camX=0;camY=0;setRot();return}const o={rx,rz,tx:camX,ty:camY};camT&&camT.kill();camT=gsap.to(o,{rx:55,rz:-28,tx:0,ty:0,duration:.9,ease:'power3.inOut',onUpdate(){rx=o.rx;rz=o.rz;camX=o.tx;camY=o.ty;setRot()}})}
+function showZ(i,cam){minfo.classList.add('full');minfo.innerHTML=roomDef(i);const x=minfo.querySelector('.xb');x&&x.addEventListener('click',()=>{showZ(-1);unfocus()});
+  $$('.room').forEach(r=>r.classList.toggle('on',+r.dataset.i===i));if(cam)focusOn(i)}
 let dragged=false;
 RM.forEach(([x,y,w,h,i,ht])=>{const d=document.createElement('div');d.className='room'+(i===7?' court':'');d.dataset.i=i;d.tabIndex=0;d.setAttribute('role','button');
   d.style.cssText=`left:${(x+4)/8}%;top:${(y+4)/5.6}%;width:${(w-8)/8}%;height:${(h-8)/5.6}%;--h:${ht}px`;
-  const t=i<0?'المدخل':(i===7?'الحوش · الساحة':D[i][0]);d.setAttribute('aria-label',i<0?ENT[0]:D[i][0]);
+  const t=i<0?'المدخل':(i===7?'المسرح والساحة الثقافية':D[i][0]);d.setAttribute('aria-label',i<0?ENT[0]:D[i][0]);
   d.innerHTML=`<span class="shadow"></span><span class="wallS"></span><span class="top3">${i>=0?ar(i+1)+' · ':''}${t}</span>`;
-  d.addEventListener('click',()=>{if(!dragged)showZ(i)});d.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showZ(i)}});
+  d.addEventListener('click',()=>{if(!dragged)showZ(i,true)});d.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showZ(i,true)}});
   plane.insertBefore(d,plane.querySelector('.trailsvg'))});
-let rx=55,rz=-28,sx,sy,srx,srz,down=false,spin=null;
-const setRot=()=>{plane.style.transform=`rotateX(${rx}deg) rotateZ(${rz}deg)`};
+let rx=55,rz=-28,camX=0,camY=0,sx,sy,srx,srz,down=false,spin=null;
+const setRot=()=>{plane.style.transform=`translate(${camX}px,${camY}px) rotateX(${rx}deg) rotateZ(${rz}deg)`};
 const scene=$('#scene');
 scene.addEventListener('pointerdown',e=>{down=true;dragged=false;sx=e.clientX;sy=e.clientY;srx=rx;srz=rz;stopSpin()});
 addEventListener('pointermove',e=>{if(!down)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>4)dragged=true;if(!dragged)return;rz=srz-dx*.35;rx=Math.max(15,Math.min(75,srx-dy*.25));setRot()});
 addEventListener('pointerup',()=>{down=false;setTimeout(()=>dragged=false,0)});
 function stopSpin(){if(spin){spin.kill();spin=null;$('#mSpin').classList.remove('pri')}}
-$('#mReset').onclick=()=>{stopSpin();if(window.gsap&&!reduce){const o={rx,rz};gsap.to(o,{rx:55,rz:-28,duration:1,ease:'power3.inOut',onUpdate(){rx=o.rx;rz=o.rz;setRot()}})}else{rx=55;rz=-28;setRot()}};
+$('#mReset').onclick=()=>{stopSpin();unfocus()};
 $('#mSpin').onclick=()=>{if(spin){stopSpin();return}if(!window.gsap||reduce)return;$('#mSpin').classList.add('pri');const o={rz};spin=gsap.to(o,{rz:rz-360,duration:18,ease:'none',repeat:-1,onUpdate(){rz=o.rz;setRot()}})};
 const ink=$('#mink'),walk=$('#mwalk'),LM=ink.getTotalLength();
 ink.style.strokeDasharray=LM;ink.style.strokeDashoffset=LM;
