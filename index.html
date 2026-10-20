@@ -538,7 +538,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
     <dialog class="pdlg" id="pdlg" aria-labelledby="pdlgT">
       <form method="dialog" class="pform" id="plock" novalidate>
         <h3 id="pdlgT">إضافة شخصية</h3>
-        <p class="pnote">هذه الخاصية للمشرف فقط.</p>
+        <p class="pnote">الإضافة والتعديل والحذف للمشرف فقط.</p>
         <label>كلمة السر<input type="password" id="ppass" autocomplete="current-password" required></label>
         <p class="perr" id="plerr" role="alert"></p>
         <div class="pact"><button type="submit" class="pbtn">دخول</button><button type="button" class="pbtn ghost" data-x>إلغاء</button></div>
@@ -735,10 +735,10 @@ function openProfile(b){const det=b.closest('details'),inl=det.querySelector('.i
   if(on){inl.classList.remove('open');return}
   const f=findP(b.dataset.key);if(!f)return;const {g:c,p}=f;
   const sec=(h,t)=>t?`<h4>${h}</h4><p class="tx">${esc(t)}</p>`:'';
-  const adm=unlocked()?'<button type="button" data-a="edit">تعديل</button><button type="button" class="del" data-a="del">حذف</button>':'';
+  const adm='<button type="button" data-a="edit">تعديل</button><button type="button" class="del" data-a="del">حذف</button>';
   inl.firstElementChild.innerHTML=`<div class="pf"><div class="who"><span class="av">${esc(p.n.replace(TTL,'').trim().charAt(0))}</span><div><p class="cat">${esc(c.c)}</p><h3>${esc(p.n)}</h3></div>${XBP}</div>${p.bio?`<p class="bio">${esc(p.bio)}</p>`:''}${sec('الدور المقترح في المشروع',p.role)}${sec(isHer(p.n)?'أثر حضورها':'أثر حضوره',p.impact)}<div class="pfa">${adm}<button type="button" data-a="print">طباعة</button></div></div>`;
   inl.querySelector('.xb').addEventListener('click',()=>{inl.classList.remove('open');b.setAttribute('aria-expanded','false');b.focus()});
-  inl.querySelectorAll('.pfa button').forEach(x=>x.addEventListener('click',()=>{const a=x.dataset.a;
+  inl.querySelectorAll('.pfa button').forEach(x=>x.addEventListener('click',()=>{const a=x.dataset.a;if(a!=='print'&&!unlocked())return askPass(()=>runAct(p.key,a));
     if(a==='print')printPeople([{c:c.c,p:[p]}],p.n);
     else if(a==='edit')openForm(p.key);
     else if(a==='del'){if(!confirm('حذف «'+p.n+'»؟'))return;if(p.key.startsWith('a:'))CH.added=CH.added.filter(y=>'a:'+y.id!==p.key);else{CH.del.push(p.key);delete CH.edits[p.key]}saveCH();renderPeople()}}));
@@ -762,10 +762,12 @@ function openForm(key){EDIT=key||null;const f=key&&findP(key);addF.reset();
   $('#pftitle').textContent=f?'تعديل شخصية':'إضافة شخصية';fillCats(f?f.g.c:null);
   if(f){$('#pname').value=f.p.n;$('#pbio').value=f.p.bio||'';$('#prole').value=f.p.role||'';$('#pimp').value=f.p.impact||''}
   lockF.hidden=true;addF.hidden=false;updCount();$('#pferr').textContent='';if(!dlg.open)dlg.showModal();setTimeout(()=>$('#pname').focus(),50)}
-$('#addp').addEventListener('click',()=>{if(unlocked())return openForm();lockF.reset();$('#plerr').textContent='';addF.hidden=true;lockF.hidden=false;dlg.showModal();setTimeout(()=>$('#ppass').focus(),50)});
+let PEND=null;function runAct(key,a){const b=$$('#acc .pchip').find(x=>x.dataset.key===key);if(!b)return;b.closest('details').open=true;if(b.getAttribute('aria-expanded')!=='true')b.click();const t=b.closest('details').querySelector('.inl .pfa [data-a="'+a+'"]');if(t)t.click()}
+function askPass(fn){PEND=fn;lockF.reset();$('#plerr').textContent='';$('#pdlgT').textContent='دخول المشرف';addF.hidden=true;lockF.hidden=false;dlg.showModal();setTimeout(()=>$('#ppass').focus(),50)}
+$('#addp').addEventListener('click',()=>{if(unlocked())return openForm();askPass(()=>openForm());$('#pdlgT').textContent='إضافة شخصية'});
 $('#plogout').addEventListener('click',()=>{setUnlocked(false);renderPeople()});
 dlg.addEventListener('click',e=>{if(e.target===dlg||e.target.closest('[data-x]'))dlg.close()});
-lockF.addEventListener('submit',async e=>{e.preventDefault();const h=await sha($('#ppass').value);if(h===PHASH){setUnlocked(true);renderPeople();openForm()}else{$('#plerr').textContent='كلمة السر غير صحيحة.';$('#ppass').select()}});
+lockF.addEventListener('submit',async e=>{e.preventDefault();const h=await sha($('#ppass').value);if(h===PHASH){setUnlocked(true);dlg.close();const f=PEND;PEND=null;const k=$$('#acc .pchip[aria-expanded="true"]').map(b=>b.dataset.key);renderPeople();k.forEach(kk=>{const b=$$('#acc .pchip').find(x=>x.dataset.key===kk);if(b)b.click()});if(f)setTimeout(()=>{const t=f;t()},80)}else{$('#plerr').textContent='كلمة السر غير صحيحة.';$('#ppass').select()}});
 $('#pcat').addEventListener('change',e=>{const n=e.target.value==='__new';$('#pnewl').hidden=!n;if(n)$('#pnew').focus()});
 addF.addEventListener('submit',e=>{e.preventDefault();const err=$('#pferr');
   const c=($('#pcat').value==='__new'?$('#pnew').value:$('#pcat').value).trim(),n=$('#pname').value.trim();
