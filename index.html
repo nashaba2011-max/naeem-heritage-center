@@ -329,7 +329,30 @@ p{margin:0}
 .acc .pf h4{font-size:.95rem;color:var(--hi);margin:14px 0 4px}
 .acc .pf .tx{color:var(--fg-2);line-height:1.9}
 .pdlg [hidden]{display:none!important}
-.padd{margin-top:18px;display:flex;justify-content:center}
+.padd{margin-top:18px;display:flex;justify-content:center;flex-wrap:wrap;gap:10px}
+.addp.plo{border-style:solid;font-size:.85rem;padding:9px 16px}
+.acc .pf .pfa{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.acc .pf .pfa button{all:unset;cursor:pointer;font-size:.88rem;font-weight:500;padding:7px 14px;border-radius:999px;background:var(--tile);color:var(--fg)}
+.acc .pf .pfa button:hover{background:var(--acc-soft);color:var(--acc)}
+.acc .pf .pfa button:focus-visible{outline:2px solid var(--acc)}
+.acc .pf .pfa .del{color:#D93025;margin:0}
+.acc .pf .pfa .del:hover{background:rgba(217,48,37,.1);color:#D93025}
+.acc .pchip.ed::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;border:1.5px solid var(--hi);margin-inline-start:7px;vertical-align:middle}
+#prt{display:none}
+@media print{
+  html.printing body>*:not(#prt){display:none!important}
+  html.printing body{background:#fff!important}
+  html.printing #prt{display:block;color:#111;font-family:inherit;direction:rtl;text-align:right}
+  #prt header{border-bottom:2px solid #B07A2A;padding-bottom:10px;margin-bottom:18px}
+  #prt header h1{font-size:20pt;margin:0}
+  #prt header p{color:#555;font-size:10pt;margin:4px 0 0}
+  #prt h2{font-size:14pt;color:#B07A2A;margin:20px 0 8px;break-after:avoid}
+  #prt article{break-inside:avoid;padding:8px 0 10px;border-bottom:1px solid #ddd}
+  #prt h3{font-size:12.5pt;margin:0 0 4px}
+  #prt h4{font-size:10pt;color:#B07A2A;margin:8px 0 2px}
+  #prt p{font-size:10.5pt;line-height:1.8;margin:0}
+  @page{margin:16mm 14mm}
+}
 .addp{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:999px;border:1px dashed var(--fg-3);color:var(--fg-2);font-size:.95rem;transition:border-color .25s,color .25s,background .25s}
 .addp svg{width:16px;height:16px}
 .addp:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-soft)}
@@ -507,7 +530,11 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
     <h2 class="h2" id="ph">٤٣ شخصية. ١١ مجالاً.</h2>
     <p class="sub">كل اسم يضيف خبرة أو علاقة أو ذاكرة.</p>
     <div class="acc" id="acc"></div>
-    <div class="padd"><button type="button" class="addp" id="addp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>إضافة شخصية</button></div>
+    <div class="padd" id="padd">
+      <button type="button" class="addp" id="addp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>إضافة شخصية</button>
+      <button type="button" class="addp" id="pprint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9V3h10v6M7 17H4v-7h16v7h-3M7 14h10v7H7z"/></svg>طباعة القائمة</button>
+      <button type="button" class="addp plo" id="plogout" hidden>خروج المشرف</button>
+    </div>
     <dialog class="pdlg" id="pdlg" aria-labelledby="pdlgT">
       <form method="dialog" class="pform" id="plock" novalidate>
         <h3 id="pdlgT">إضافة شخصية</h3>
@@ -517,7 +544,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
         <div class="pact"><button type="submit" class="pbtn">دخول</button><button type="button" class="pbtn ghost" data-x>إلغاء</button></div>
       </form>
       <form class="pform" id="pform" hidden novalidate>
-        <h3>إضافة شخصية</h3>
+        <h3 id="pftitle">إضافة شخصية</h3>
         <label>المجال<select id="pcat"></select></label>
         <label id="pnewl" hidden>اسم المجال الجديد<input id="pnew" maxlength="80"></label>
         <label>الاسم مع اللقب<input id="pname" maxlength="120" required placeholder="مثال: الأستاذ ..."></label>
@@ -526,7 +553,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
         <label>أثر الحضور<textarea id="pimp" rows="2" maxlength="2000"></textarea></label>
         <p class="perr" id="pferr" role="alert"></p>
         <div class="pact"><button type="submit" class="pbtn">حفظ</button><button type="button" class="pbtn ghost" data-x>إلغاء</button></div>
-        <div class="pio"><span id="pcount"></span><button type="button" class="plink" id="pexp">تصدير المضافين</button><label class="plink">استيراد<input type="file" id="pimpf" accept="application/json,.json" hidden></label></div>
+        <div class="pio"><span id="pcount"></span><button type="button" class="plink" id="prest" hidden>استعادة الأصل</button><button type="button" class="plink" id="pexp">تصدير التغييرات</button><label class="plink">استيراد<input type="file" id="pimpf" accept="application/json,.json" hidden></label></div>
       </form>
     </dialog>
   </div>
@@ -682,54 +709,85 @@ const XBP='<button type="button" class="xb" aria-label="إغلاق"><svg viewBox
 const PLUS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
 const acc=$('#acc');
 const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const PKEY='naeem-people-added',PHASH='1562c06edafaac1d873aa3a538cc8c8d49769b4a26696a53adfb11c2290a0be4';
-const loadAdded=()=>{try{const a=JSON.parse(localStorage.getItem(PKEY)||'[]');return Array.isArray(a)?a.filter(x=>x&&x.n&&x.c):[]}catch(e){return[]}};
-const saveAdded=a=>{try{localStorage.setItem(PKEY,JSON.stringify(a));return true}catch(e){return false}};
-let ADDED=loadAdded(),ALL=[];
-const merge=()=>{const all=PEOPLE.map(c=>({c:c.c,p:c.p.slice()}));ADDED.forEach(x=>{let g=all.find(c=>c.c===x.c);if(!g){g={c:x.c,p:[]};all.push(g)}g.p.push({n:x.n,bio:x.bio||'',role:x.role||'',impact:x.impact||'',id:x.id})});return all};
-const nInWords=n=>ar(n);
+const PKEY='naeem-people-v2',PHASH='1562c06edafaac1d873aa3a538cc8c8d49769b4a26696a53adfb11c2290a0be4';
+const blankCH=()=>({added:[],edits:{},del:[]});
+function loadCH(){try{const v=JSON.parse(localStorage.getItem(PKEY)||'null');if(v&&typeof v==='object')return{added:Array.isArray(v.added)?v.added:[],edits:v.edits&&typeof v.edits==='object'?v.edits:{},del:Array.isArray(v.del)?v.del:[]};
+  const old=JSON.parse(localStorage.getItem('naeem-people-added')||'[]');const c=blankCH();if(Array.isArray(old))c.added=old.filter(x=>x&&x.n&&x.c);return c}catch(e){return blankCH()}}
+const saveCH=()=>{try{localStorage.setItem(PKEY,JSON.stringify(CH));return true}catch(e){return false}};
+let CH=loadCH(),ALL=[],EDIT=null;
+const findP=k=>{for(const g of ALL)for(const p of g.p)if(p.key===k)return{g,p};return null};
+function merge(){const all=PEOPLE.map(c=>({c:c.c,p:[]}));const grp=c=>{let g=all.find(x=>x.c===c);if(!g){g={c,p:[]};all.push(g)}return g};
+  PEOPLE.forEach(c=>c.p.forEach(p=>{const k='o:'+p.n;if(CH.del.includes(k))return;const e=CH.edits[k];const r={n:p.n,bio:p.bio,role:p.role,impact:p.impact,...(e||{}),key:k,ed:!!e};grp((e&&e.c)||c.c).p.push(r)}));
+  CH.added.forEach(x=>grp(x.c).p.push({n:x.n,bio:x.bio||'',role:x.role||'',impact:x.impact||'',key:'a:'+x.id,nw:true}));
+  return all.filter(g=>g.p.length)}
 function renderPeople(){
   ALL=merge();const tot=ALL.reduce((s,c)=>s+c.p.length,0);
   $('#ph').textContent=`${ar(tot)} شخصية. ${ar(ALL.length)} مجالاً.`;
   const np=$('#npeople');if(np){const was=np.textContent===ar(np.dataset.to);np.dataset.to=tot;if(was||!window.gsap)np.textContent=ar(tot)}
   const openCats=$$('#acc details[open]').map(d=>d.dataset.c);
-  acc.innerHTML=ALL.map((c,ci)=>`<details data-c="${esc(c.c)}"${openCats.includes(c.c)?' open':''}><summary>${esc(c.c)}<span class="cnt">${ar(c.p.length)}</span>${PLUS}</summary><div class="chips">${c.p.map((p,pi)=>`<button type="button" class="pchip${p.id?' new':''}" aria-expanded="false" data-k="${ci}-${pi}">${esc(p.n)}</button>`).join('')}</div><div class="inl"><div></div></div></details>`).join('');
+  acc.innerHTML=ALL.map((c,ci)=>`<details data-c="${esc(c.c)}"${openCats.includes(c.c)?' open':''}><summary>${esc(c.c)}<span class="cnt">${ar(c.p.length)}</span>${PLUS}</summary><div class="chips">${c.p.map(p=>`<button type="button" class="pchip${p.nw?' new':p.ed&&unlocked()?' ed':''}" aria-expanded="false" data-key="${esc(p.key)}">${esc(p.n)}</button>`).join('')}</div><div class="inl"><div></div></div></details>`).join('');
   $$('#acc .pchip').forEach(b=>b.addEventListener('click',()=>openProfile(b)));
+  $('#plogout').hidden=!unlocked();
   if(window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),300);
 }
+const isHer=n=>/الأستاذة|الدكتورة/.test(n);
 function openProfile(b){const det=b.closest('details'),inl=det.querySelector('.inl'),on=b.getAttribute('aria-expanded')==='true';
   det.querySelectorAll('.pchip').forEach(x=>x.setAttribute('aria-expanded','false'));
   if(on){inl.classList.remove('open');return}
-  const [ci,pi]=b.dataset.k.split('-').map(Number);const c=ALL[ci],p=c.p[pi];const her=/الأستاذة|الدكتورة/.test(p.n);
+  const f=findP(b.dataset.key);if(!f)return;const {g:c,p}=f;
   const sec=(h,t)=>t?`<h4>${h}</h4><p class="tx">${esc(t)}</p>`:'';
-  inl.firstElementChild.innerHTML=`<div class="pf"><div class="who"><span class="av">${esc(p.n.replace(TTL,'').trim().charAt(0))}</span><div><p class="cat">${esc(c.c)}</p><h3>${esc(p.n)}</h3></div>${XBP}</div>${p.bio?`<p class="bio">${esc(p.bio)}</p>`:''}${sec('الدور المقترح في المشروع',p.role)}${sec(her?'أثر حضورها':'أثر حضوره',p.impact)}${p.id&&unlocked()?'<button type="button" class="del">حذف هذه الشخصية</button>':''}</div>`;
+  const adm=unlocked()?'<button type="button" data-a="edit">تعديل</button><button type="button" class="del" data-a="del">حذف</button>':'';
+  inl.firstElementChild.innerHTML=`<div class="pf"><div class="who"><span class="av">${esc(p.n.replace(TTL,'').trim().charAt(0))}</span><div><p class="cat">${esc(c.c)}</p><h3>${esc(p.n)}</h3></div>${XBP}</div>${p.bio?`<p class="bio">${esc(p.bio)}</p>`:''}${sec('الدور المقترح في المشروع',p.role)}${sec(isHer(p.n)?'أثر حضورها':'أثر حضوره',p.impact)}<div class="pfa">${adm}<button type="button" data-a="print">طباعة</button></div></div>`;
   inl.querySelector('.xb').addEventListener('click',()=>{inl.classList.remove('open');b.setAttribute('aria-expanded','false');b.focus()});
-  const del=inl.querySelector('.del');if(del)del.addEventListener('click',()=>{if(!confirm('حذف «'+p.n+'»؟'))return;ADDED=ADDED.filter(x=>x.id!==p.id);saveAdded(ADDED);renderPeople()});
+  inl.querySelectorAll('.pfa button').forEach(x=>x.addEventListener('click',()=>{const a=x.dataset.a;
+    if(a==='print')printPeople([{c:c.c,p:[p]}],p.n);
+    else if(a==='edit')openForm(p.key);
+    else if(a==='del'){if(!confirm('حذف «'+p.n+'»؟'))return;if(p.key.startsWith('a:'))CH.added=CH.added.filter(y=>'a:'+y.id!==p.key);else{CH.del.push(p.key);delete CH.edits[p.key]}saveCH();renderPeople()}}));
   b.setAttribute('aria-expanded','true');inl.classList.add('open');if(window.ScrollTrigger)setTimeout(()=>ScrollTrigger.refresh(),550)}
-renderPeople();
-/* add person */
+/* print */
+function printPeople(groups,title){let el=$('#prt');if(!el){el=document.createElement('div');el.id='prt';document.body.appendChild(el)}
+  const d=new Date().toLocaleDateString('ar-BH',{year:'numeric',month:'long',day:'numeric'});const tot=groups.reduce((s,g)=>s+g.p.length,0);
+  el.innerHTML=`<header><h1>${title?esc(title):'الشخصيات المؤسِّسة'}</h1><p>مركز النعيم الثقافي والتراثي${title?'':' · '+ar(tot)+' شخصية في '+ar(groups.length)+' مجالاً'} · ${d}</p></header>`+groups.map(g=>`<h2>${esc(g.c)}</h2>`+g.p.map(p=>`<article>${title?'':`<h3>${esc(p.n)}</h3>`}${p.bio?`<p>${esc(p.bio)}</p>`:''}${p.role?`<h4>الدور المقترح في المشروع</h4><p>${esc(p.role)}</p>`:''}${p.impact?`<h4>${isHer(p.n)?'أثر حضورها':'أثر حضوره'}</h4><p>${esc(p.impact)}</p>`:''}</article>`).join('')).join('');
+  document.documentElement.classList.add('printing');const done=()=>{document.documentElement.classList.remove('printing');removeEventListener('afterprint',done)};addEventListener('afterprint',done);setTimeout(()=>{window.print();setTimeout(done,1500)},60)}
+$('#pprint').addEventListener('click',()=>printPeople(ALL));
+/* admin: add / edit / delete */
 const dlg=$('#pdlg'),lockF=$('#plock'),addF=$('#pform');
 const unlocked=()=>{try{return sessionStorage.getItem('naeem-admin')==='1'}catch(e){return window.__nadm===1}};
-const setUnlocked=()=>{window.__nadm=1;try{sessionStorage.setItem('naeem-admin','1')}catch(e){}};
+const setUnlocked=v=>{window.__nadm=v?1:0;try{v?sessionStorage.setItem('naeem-admin','1'):sessionStorage.removeItem('naeem-admin')}catch(e){}};
+renderPeople();
 async function sha(t){if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}return null}
-function fillCats(){const sel=$('#pcat');sel.innerHTML=ALL.map(c=>`<option>${esc(c.c)}</option>`).join('')+'<option value="__new">مجال جديد…</option>';$('#pnewl').hidden=true}
-function updCount(){$('#pcount').textContent=ADDED.length?`أضفت ${ar(ADDED.length)} على هذا الجهاز`:'لا توجد إضافات بعد'}
-function showForm(){lockF.hidden=true;addF.hidden=false;fillCats();updCount();$('#pferr').textContent='';setTimeout(()=>$('#pname').focus(),50)}
-$('#addp').addEventListener('click',()=>{lockF.reset();$('#plerr').textContent='';if(unlocked())showForm();else{addF.hidden=true;lockF.hidden=false}dlg.showModal();if(!unlocked())setTimeout(()=>$('#ppass').focus(),50)});
+function fillCats(sel){const s=$('#pcat');s.innerHTML=ALL.map(c=>`<option${c.c===sel?' selected':''}>${esc(c.c)}</option>`).join('')+'<option value="__new">مجال جديد…</option>';$('#pnewl').hidden=true}
+function updCount(){const n=CH.added.length,e=Object.keys(CH.edits).length,d=CH.del.length;
+  $('#pcount').textContent=n+e+d?[n&&`أضفت ${ar(n)}`,e&&`عدّلت ${ar(e)}`,d&&`حذفت ${ar(d)}`].filter(Boolean).join(' · ')+' على هذا الجهاز':'لا توجد تغييرات بعد';$('#prest').hidden=!(e+d)}
+function openForm(key){EDIT=key||null;const f=key&&findP(key);addF.reset();
+  $('#pftitle').textContent=f?'تعديل شخصية':'إضافة شخصية';fillCats(f?f.g.c:null);
+  if(f){$('#pname').value=f.p.n;$('#pbio').value=f.p.bio||'';$('#prole').value=f.p.role||'';$('#pimp').value=f.p.impact||''}
+  lockF.hidden=true;addF.hidden=false;updCount();$('#pferr').textContent='';if(!dlg.open)dlg.showModal();setTimeout(()=>$('#pname').focus(),50)}
+$('#addp').addEventListener('click',()=>{if(unlocked())return openForm();lockF.reset();$('#plerr').textContent='';addF.hidden=true;lockF.hidden=false;dlg.showModal();setTimeout(()=>$('#ppass').focus(),50)});
+$('#plogout').addEventListener('click',()=>{setUnlocked(false);renderPeople()});
 dlg.addEventListener('click',e=>{if(e.target===dlg||e.target.closest('[data-x]'))dlg.close()});
-lockF.addEventListener('submit',async e=>{e.preventDefault();const v=$('#ppass').value;const h=await sha(v);if(h===PHASH){setUnlocked();showForm()}else{$('#plerr').textContent='كلمة السر غير صحيحة.';$('#ppass').select()}});
+lockF.addEventListener('submit',async e=>{e.preventDefault();const h=await sha($('#ppass').value);if(h===PHASH){setUnlocked(true);renderPeople();openForm()}else{$('#plerr').textContent='كلمة السر غير صحيحة.';$('#ppass').select()}});
 $('#pcat').addEventListener('change',e=>{const n=e.target.value==='__new';$('#pnewl').hidden=!n;if(n)$('#pnew').focus()});
 addF.addEventListener('submit',e=>{e.preventDefault();const err=$('#pferr');
   const c=($('#pcat').value==='__new'?$('#pnew').value:$('#pcat').value).trim(),n=$('#pname').value.trim();
   if(!c){err.textContent='اكتب اسم المجال الجديد.';$('#pnew').focus();return}
   if(n.length<3){err.textContent='اكتب اسم الشخصية.';$('#pname').focus();return}
-  if(ALL.some(g=>g.p.some(p=>p.n===n))){err.textContent='هذه الشخصية موجودة مسبقاً.';$('#pname').focus();return}
-  const rec={id:Date.now().toString(36),c,n,bio:$('#pbio').value.trim(),role:$('#prole').value.trim(),impact:$('#pimp').value.trim()};
-  ADDED.push(rec);if(!saveAdded(ADDED)){ADDED.pop();err.textContent='تعذّر الحفظ على هذا الجهاز.';return}
-  dlg.close();addF.reset();renderPeople();
-  const d=$$('#acc details').find(x=>x.dataset.c===c);if(d){d.open=true;const b=[...d.querySelectorAll('.pchip')].pop();b.click();setTimeout(()=>d.scrollIntoView({behavior:'smooth',block:'center'}),80)}});
-$('#pexp').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(ADDED,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='naeem-people-added.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)});
-$('#pimpf').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const a=JSON.parse(await f.text());if(!Array.isArray(a))throw 0;let k=0;a.forEach(x=>{if(x&&x.n&&x.c&&!ADDED.some(y=>y.n===x.n)&&!PEOPLE.some(g=>g.p.some(p=>p.n===x.n))){ADDED.push({id:x.id||Date.now().toString(36)+k,c:String(x.c),n:String(x.n),bio:String(x.bio||''),role:String(x.role||''),impact:String(x.impact||'')});k++}});saveAdded(ADDED);renderPeople();fillCats();updCount();$('#pferr').textContent=`تم استيراد ${ar(k)}.`}catch(_){$('#pferr').textContent='الملف غير صالح.'}e.target.value=''});
+  if(ALL.some(g=>g.p.some(p=>p.n===n&&p.key!==EDIT))){err.textContent='هذه الشخصية موجودة مسبقاً.';$('#pname').focus();return}
+  const rec={c,n,bio:$('#pbio').value.trim(),role:$('#prole').value.trim(),impact:$('#pimp').value.trim()};
+  const bak=JSON.stringify(CH);let key;
+  if(!EDIT){const id=Date.now().toString(36);CH.added.push({id,...rec});key='a:'+id}
+  else if(EDIT.startsWith('a:')){const x=CH.added.find(y=>'a:'+y.id===EDIT);Object.assign(x,rec);key=EDIT}
+  else{CH.edits[EDIT]=rec;key=EDIT}
+  if(!saveCH()){CH=JSON.parse(bak);err.textContent='تعذّر الحفظ على هذا الجهاز.';return}
+  dlg.close();renderPeople();
+  const b=$$('#acc .pchip').find(x=>x.dataset.key===key);if(b){const d=b.closest('details');d.open=true;b.click();setTimeout(()=>d.scrollIntoView({behavior:'smooth',block:'center'}),80)}});
+$('#prest').addEventListener('click',()=>{if(!confirm('إلغاء كل التعديلات والحذف على الشخصيات الأصلية؟ (تبقى الشخصيات المضافة)'))return;CH.edits={};CH.del=[];saveCH();renderPeople();fillCats();updCount()});
+$('#pexp').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(CH,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='naeem-people-changes.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)});
+$('#pimpf').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{let v=JSON.parse(await f.text());if(Array.isArray(v))v={added:v};if(!v||typeof v!=='object')throw 0;let k=0;
+  (v.added||[]).forEach(x=>{if(x&&x.n&&x.c&&!CH.added.some(y=>y.n===x.n)){CH.added.push({id:String(x.id||Date.now().toString(36)+k),c:String(x.c),n:String(x.n),bio:String(x.bio||''),role:String(x.role||''),impact:String(x.impact||'')});k++}});
+  Object.entries(v.edits||{}).forEach(([kk,x])=>{if(x&&x.n&&x.c){CH.edits[kk]={c:String(x.c),n:String(x.n),bio:String(x.bio||''),role:String(x.role||''),impact:String(x.impact||'')};k++}});
+  (v.del||[]).forEach(kk=>{if(!CH.del.includes(kk)){CH.del.push(String(kk));k++}});
+  saveCH();renderPeople();fillCats();updCount();$('#pferr').textContent=`تم استيراد ${ar(k)} تغييراً.`}catch(_){$('#pferr').textContent='الملف غير صالح.'}e.target.value=''});
 
 /* statement: curtain lines + gold underline (Arabic split by lines only) */
 if(G){
