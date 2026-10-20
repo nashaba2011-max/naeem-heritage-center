@@ -1037,7 +1037,7 @@ if(G){
  function salut(p){if(!p)return'الأخ الكريم / الأخت الكريمة ................................ المحترم/ة،،';return isHer(p.n)?`الأخت الكريمة / ${p.n} المحترمة،،`:`الأخ الكريم / ${p.n} المحترم،،`}
  function sync(){const p=person();
   art.querySelector('.lsal').innerHTML=p?esc(salut(p)).replace(esc(p.n),`<span class="lfill">${esc(p.n)}</span>`):esc(salut(null));
-  const bio=art.querySelector('.lbio'),bh=art.querySelector('.lbioh');bio.textContent='';bio.hidden=true;bh.hidden=!!p;
+  const bio=art.querySelector('.lbio'),bh=art.querySelector('.lbioh');bio.textContent=p&&p.bio||'';bio.hidden=!(p&&p.bio);bh.hidden=!!p;
   art.querySelector('.lspon').textContent=val('spon','............');[['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).classList.toggle('lset',!!F[k].value.trim()));art.querySelector('.lco').textContent=val('co','...........................');
   art.querySelector('.ldate').textContent=val('date',dots);art.querySelector('.lwhen').textContent=val('when',dots);art.querySelector('.lwhere').textContent=val('where',dots);
   $('#invPdf').setAttribute('aria-disabled',String(!p))}
@@ -1052,7 +1052,8 @@ if(G){
   out.push('<p class="lb">بسم الله الرحمن الرحيم</p>');out.push(`<h1>${esc(art.querySelector('h2').textContent)}</h1>`);
   [...art.children].forEach(el=>{
    if(el.matches('.ix,.ibism,.ik,h2,.inv,.iback'))return;
-   if(el.matches('.lbioh,.lbio'))return;
+   if(el.matches('.lbioh'))return;
+   if(el.matches('.lbio')){if(p.bio)out.push(`<p>${esc(p.bio)}</p>`);return}
    if(el.matches('.lsal')){out.push(`<p class="sal">${esc(salut(p))}</p>`);return}
    if(el.matches('.isig')){if(!skip){out.push('<div class="sig">');skip=true}out.push(`<p>${esc(el.textContent)}</p>`);return}
    out.push(el.outerHTML)});
