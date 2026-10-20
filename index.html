@@ -670,8 +670,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
   <label class="invw">الجهة التي وافقت على تبنّي المشروع ورعايته<input id="invSpon" placeholder="مثال: مركز تمكين شباب النعيم"><span class="invx">تُكتب في: «وقد حظيت فكرة المشروع بموافقة (…) على تبنيها ورعايتها»</span></label>
   <div class="invg">
     <label class="invw">بالتنسيق مع<input id="invCo"></label>
-    <label>التاريخ<input id="invDate" type="date"><span class="invx invd" id="invDateTx"></span></label>
-    <label>موعد الاجتماع<input id="invWhen" type="date"><span class="invx invd" id="invWhenTx"></span></label>
+    <label class="invw">موعد الاجتماع<input id="invWhen" type="date"><span class="invx invd" id="invWhenTx"></span></label>
     <div class="invw invt2"><label>الوقت من<input id="invTf" type="time"></label><label>إلى<input id="invTt" type="time"></label><span class="invx invd" id="invTimeTx"></span></div>
     <label class="invw">المكان<input id="invWhere"></label>
   </div>
@@ -726,7 +725,6 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
 <p class="isig">المعد والمشارك معكم</p>
 <p class="isig">عمار أحمد النشابة</p>
 <p class="isig">بالتنسيق مع (<span class="lco">...........................</span>)</p>
-<p class="isig">التاريخ: <span class="ldate">............................</span></p>
 <p class="isig">موعد الاجتماع: <span class="lwhen">............................</span></p>
 <p class="isig">الوقت: <span class="ltime">............................</span></p>
 <p class="isig">المكان: <span class="lwhere">............................</span></p>
@@ -1033,11 +1031,10 @@ if(G){
 
 /* invitation letter: pick a person, save as PDF */
 (function(){const art=$('#x4'),sel=$('#invName');if(!art||!sel)return;
- const F={spon:$('#invSpon'),co:$('#invCo'),date:$('#invDate'),when:$('#invWhen'),tf:$('#invTf'),tt:$('#invTt'),where:$('#invWhere')};
+ const F={spon:$('#invSpon'),co:$('#invCo'),when:$('#invWhen'),tf:$('#invTf'),tt:$('#invTt'),where:$('#invWhere')};
  try{const v=JSON.parse(localStorage.getItem('naeem-invite')||'{}');Object.keys(F).forEach(k=>{if(v[k])F[k].value=v[k]})}catch(e){}
  const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
- if(!/^\d{4}-\d\d-\d\d$/.test(F.date.value))F.date.value=iso(new Date());
- if(F.when.value){const mm=F.when.value.match(/^\d{4}-\d\d-\d\d/);F.when.value=mm?mm[0]:''}
+  if(F.when.value){const mm=F.when.value.match(/^\d{4}-\d\d-\d\d/);F.when.value=mm?mm[0]:''}
  const DAYS=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
  const fmtD=(v,day)=>{const m=v.match(/^(\d{4})-(\d\d)-(\d\d)/);if(!m)return v;const ds=`${m[3]}.${m[2]}.${m[1]}`;return day?`${DAYS[new Date(+m[1],m[2]-1,+m[3]).getDay()]} ${ds}`:ds};
  const t12=v=>{const m=v.match(/^(\d\d):(\d\d)/);if(!m)return null;const h=+m[1];return{t:`${h%12||12}.${m[2]}`,ap:h<12?'صباحاً':'مساءً'}};
@@ -1051,10 +1048,10 @@ if(G){
  function sync(){const p=person();
   art.querySelector('.lsal').innerHTML=p?esc(salut(p)).replace(esc(p.n),`<span class="lfill">${esc(p.n)}</span>`):esc(salut(null));
   const bio=art.querySelector('.lbio'),bh=art.querySelector('.lbioh');bio.textContent=p&&p.bio||'';bio.hidden=!(p&&p.bio);bh.hidden=!!p;
-  art.querySelector('.lspon').textContent=val('spon','............');[['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.ltime','tf'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).classList.toggle('lset',!!F[k].value.trim()));art.querySelector('.lco').textContent=val('co','...........................');
-  art.querySelector('.ldate').textContent=F.date.value?fmtD(F.date.value):dots;art.querySelector('.lwhen').textContent=F.when.value?fmtD(F.when.value,1):dots;$('#invDateTx').textContent=F.date.value?fmtD(F.date.value):'';$('#invWhenTx').textContent=F.when.value?fmtD(F.when.value,1):'';const tm=fmtT();art.querySelector('.ltime').textContent=tm||dots;$('#invTimeTx').textContent=tm;art.querySelector('.lwhere').textContent=val('where',dots);
+  art.querySelector('.lspon').textContent=val('spon','............');[['.lspon','spon'],['.lco','co'],['.lwhen','when'],['.ltime','tf'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).classList.toggle('lset',!!F[k].value.trim()));art.querySelector('.lco').textContent=val('co','...........................');
+  art.querySelector('.lwhen').textContent=F.when.value?fmtD(F.when.value,1):dots;$('#invWhenTx').textContent=F.when.value?fmtD(F.when.value,1):'';const tm=fmtT();art.querySelector('.ltime').textContent=tm||dots;$('#invTimeTx').textContent=tm;art.querySelector('.lwhere').textContent=val('where',dots);
   $('#invPdf').setAttribute('aria-disabled',String(!p))}
- [['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.ltime','tf'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).addEventListener('click',()=>{if(!unlocked())return;F[k].scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>F[k].focus({preventScroll:true}),350)}));
+ [['.lspon','spon'],['.lco','co'],['.lwhen','when'],['.ltime','tf'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).addEventListener('click',()=>{if(!unlocked())return;F[k].scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>F[k].focus({preventScroll:true}),350)}));
  sel.addEventListener('focus',fill);sel.addEventListener('pointerdown',fill);sel.addEventListener('change',sync);
  Object.values(F).forEach(i=>{i.addEventListener('input',()=>{sync();save()});i.addEventListener('change',()=>{sync();save()})});
  fill();sync();
@@ -1066,7 +1063,7 @@ if(G){
   [...art.children].forEach(el=>{
    if(el.matches('.ix,.ibism,.ik,h2,.inv,.iback'))return;
    if(el.matches('.lbioh'))return;
-   const fk=[['.lspon','spon'],['.lco','co'],['.ldate','date'],['.lwhen','when'],['.ltime','tf'],['.lwhere','where']].find(([c])=>el.querySelector(c));if(fk&&!F[fk[1]].value.trim())return;
+   const fk=[['.lspon','spon'],['.lco','co'],['.lwhen','when'],['.ltime','tf'],['.lwhere','where']].find(([c])=>el.querySelector(c));if(fk&&!F[fk[1]].value.trim())return;
    if(el.matches('.lbio')){if(p.bio)out.push(`<p>${esc(p.bio)}</p>`);return}
    if(el.matches('.lsal')){out.push(`<p class="sal">${esc(salut(p))}</p>`);return}
    if(el.matches('.isig')){if(!skip){out.push('<div class="sig">');skip=true}out.push(`<p>${esc(el.textContent)}</p>`);return}
