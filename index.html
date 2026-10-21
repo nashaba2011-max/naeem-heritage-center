@@ -3,12 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}#inst{position:fixed;left:16px;bottom:16px;z-index:60;all:unset;position:fixed;left:16px;bottom:16px;z-index:60;cursor:pointer;padding:11px 18px;border-radius:999px;background:#1D1D1F;color:#fff;font:600 .9rem system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.25)}</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>مركز النعيم الثقافي والتراثي</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1149,7 +1147,6 @@ if(G){
 
 </script>
 
-<button type="button" id="inst" hidden>تثبيت كبرنامج على الكمبيوتر</button>
-<script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));let __ip;addEventListener("beforeinstallprompt",e=>{e.preventDefault();__ip=e;document.getElementById("inst").hidden=false});document.getElementById("inst").addEventListener("click",async()=>{if(!__ip)return;__ip.prompt();await __ip.userChoice;__ip=null;document.getElementById("inst").hidden=true});addEventListener("appinstalled",()=>document.getElementById("inst").hidden=true)</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.getRegistrations().then(r=>r.forEach(x=>x.unregister())).catch(()=>{});if(window.caches)caches.keys().then(k=>k.forEach(n=>caches.delete(n))).catch(()=>{})}</script>
 </body>
 </html>
