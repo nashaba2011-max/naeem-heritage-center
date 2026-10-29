@@ -373,6 +373,29 @@ p{margin:0}
 .intro.adm .lset,.intro .lset{color:var(--hi);font-weight:700;border-bottom:0}
 .intro .lfill{color:var(--hi);font-weight:700}
 @media (max-width:560px){.inv .invg,.inv .invt2{grid-template-columns:1fr}}
+.inv .wab{margin:18px 0 6px;background:var(--tile);border:1px solid var(--line);border-radius:12px;padding:16px}
+.inv .wabh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.inv .wabt{font-weight:700;color:var(--fg)}
+.inv .wacnt{font-size:.85rem;color:var(--fg-2);font-variant-numeric:tabular-nums}
+.inv .waall{flex-direction:row;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px solid var(--line);margin-bottom:4px;color:var(--fg);font-weight:600;cursor:pointer}
+.inv .waall input,.inv .warow input{width:18px;height:18px;margin:0;accent-color:#25D366;cursor:pointer;flex:none}
+.inv .warow{display:flex;align-items:center;gap:10px;padding:6px 2px;border-radius:8px}
+.inv .warow:hover{background:var(--bg-2)}
+.inv .walab{flex:1;direction:ltr;text-align:right;font-variant-numeric:tabular-nums;color:var(--fg);cursor:pointer;font-size:1rem}
+.inv .wadel{all:unset;cursor:pointer;color:var(--fg-3);padding:4px 8px;border-radius:7px;font-size:.85rem}
+.inv .wadel:hover{color:var(--fg);background:var(--line)}
+.inv .wadel:focus-visible,.inv .wasend:focus-visible,.inv .walinks a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.inv .wadd{display:flex;gap:8px;margin-top:12px}
+.inv .wadd input{direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+.inv .wadd .pbtn{flex:none}
+.inv .waerr{min-height:1.3em;margin:6px 2px 0;color:#8A4B22}
+.inv .wasend{width:100%;justify-content:center;margin-top:10px;background:#25D366;color:#04210F;border-color:transparent}
+.inv .wasend[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
+.inv .walinks{margin-top:12px;display:grid;gap:8px}
+.inv .walinks a{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:10px;background:var(--bg-2);color:var(--fg);text-decoration:none;direction:ltr;font-variant-numeric:tabular-nums}
+.inv .walinks a span{direction:rtl;color:#0B6B33;font-weight:700}
+.inv .walinks a:hover{outline:1px solid #25D366}
+[data-theme="dark"] .inv .walinks a span,:root:not([data-theme="light"]) .inv .walinks a span{color:#7BE3A3}
 @media print{
   html.printing #prt.letter{font-size:12pt}
   #prt.letter .lframe{display:block;position:fixed;inset:0;width:100%;height:100%;object-fit:fill;z-index:-1}
@@ -720,6 +743,59 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
     <div class="invw invt2"><label>الوقت من<span class="dwrap tw"><input id="invTf" class="hm" inputmode="numeric" placeholder="10.30" maxlength="5" autocomplete="off"><span class="dcal dico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><button type="button" class="dap" id="invApF" aria-label="تبديل صباحاً أو مساءً">صباحاً</button><input type="hidden" id="invApFV" value=""></span></label><label>إلى<span class="dwrap tw"><input id="invTt" class="hm" inputmode="numeric" placeholder="11.30" maxlength="5" autocomplete="off"><span class="dcal dico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><button type="button" class="dap" id="invApT" aria-label="تبديل صباحاً أو مساءً">صباحاً</button><input type="hidden" id="invApTV" value=""></span></label></div>
     <label class="invw">المكان<input id="invWhere"></label>
   </div>
+  <div class="wab" id="waBox">
+    <div class="wabh"><span class="wabt">أرقام واتساب للإرسال</span><span class="wacnt" id="waCnt" aria-live="polite"></span></div>
+    <label class="waall"><input type="checkbox" id="waAll"> تحديد الكل</label>
+    <div class="walist" id="waList"></div>
+    <div class="wadd"><input id="waNum" inputmode="tel" placeholder="مثال: 3300 1234" aria-label="رقم واتساب جديد"><button type="button" class="pbtn" id="waAdd">إضافة</button></div>
+    <p class="invh waerr" id="waErr" role="alert"></p>
+    <button type="button" class="pbtn wasend" id="waSend" aria-disabled="true">إرسال الدعوة عبر واتساب</button>
+    <div class="walinks" id="waLinks" hidden></div>
+  </div>
+  <script>
+  (function(){
+    const CC='973', INVITE='دعوة لحضور المؤتمر التأسيسي لمشروع مركز النعيم الثقافي والتراثي';
+    const $=s=>document.getElementById(s);
+    const list=[], sel=new Set(); let seq=1;
+    const fmt=n=>n.replace(/(\d{4})(\d{4})/,'$1 $2');
+    const norm=raw=>{let d=raw.replace(/\D/g,'');if(d.startsWith('00'))d=d.slice(2);if(d.length===8)d=CC+d;return d};
+    function render(){
+      const box=$('waList'); box.innerHTML='';
+      list.forEach(x=>{
+        const row=document.createElement('div'); row.className='warow';
+        const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=sel.has(x.id); cb.id='wa'+x.id;
+        const lb=document.createElement('label'); lb.htmlFor=cb.id; lb.className='walab'; lb.textContent=fmt(x.n);
+        const del=document.createElement('button'); del.type='button'; del.className='wadel'; del.textContent='حذف'; del.setAttribute('aria-label','حذف الرقم '+fmt(x.n));
+        del.onclick=()=>{const i=list.indexOf(x);if(i>-1)list.splice(i,1);sel.delete(x.id);render()};
+        cb.onchange=()=>{cb.checked?sel.add(x.id):sel.delete(x.id);render()};
+        row.append(cb,lb,del); box.appendChild(row);
+      });
+      const k=sel.size,t=list.length;
+      $('waCnt').textContent=t?k+' من '+t+' محدد':'لا توجد أرقام بعد';
+      $('waAll').checked=t>0&&k===t; $('waAll').indeterminate=k>0&&k<t;
+      $('waSend').setAttribute('aria-disabled',String(k===0));
+      $('waLinks').hidden=true; $('waLinks').innerHTML='';
+    }
+    $('waAll').addEventListener('change',()=>{sel.clear();if($('waAll').checked)list.forEach(x=>sel.add(x.id));render()});
+    function add(){
+      const d=norm($('waNum').value), err=$('waErr');
+      if(!/^973\d{8}$/.test(d)){err.textContent='اكتب رقماً بحرينياً من 8 أرقام، مثل 3300 1234.';return}
+      if(list.some(x=>norm(x.n)===d)){err.textContent='هذا الرقم مُضاف مسبقاً.';return}
+      const x={id:seq++,n:d.slice(3)}; list.push(x); sel.add(x.id);
+      $('waNum').value=''; err.textContent=''; render();
+    }
+    $('waAdd').addEventListener('click',add);
+    $('waNum').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();add()}});
+    $('waSend').addEventListener('click',()=>{
+      if($('waSend').getAttribute('aria-disabled')==='true')return;
+      const t=encodeURIComponent(INVITE);
+      const box=$('waLinks');
+      box.innerHTML=list.filter(x=>sel.has(x.id)).map(x=>'<a href="https://wa.me/'+CC+x.n+'?text='+t+'" target="_blank" rel="noopener"><span>فتح واتساب</span>'+fmt(x.n)+'</a>').join('');
+      box.hidden=false;
+    });
+    render();
+  })();
+  </script>
   <div class="invb"><button type="button" class="pbtn" id="invPdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>حفظ الدعوة PDF</button><p class="invh" id="invHint">في نافذة الطباعة اختر «حفظ كـ PDF».</p></div>
 </div>
 
