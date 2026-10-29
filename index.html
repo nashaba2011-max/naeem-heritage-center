@@ -860,6 +860,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
       window.location.href='mailto:?bcc='+encodeURIComponent(ems.join(','))+'&subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
     });
 
+    $('invName').addEventListener('change',()=>{const k=$('invName').value;if(!k)return;picked.add(k);renderList();renderRows();});
     window.addEventListener('load',()=>{renderList();renderRows();});
   })();
   </script>
