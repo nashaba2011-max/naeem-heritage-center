@@ -1026,7 +1026,7 @@ const XBP='<button type="button" class="xb" aria-label="إغلاق"><svg viewBox
 const PLUS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
 const acc=$('#acc');
 const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const PKEY='naeem-people-v2',PHASH='1562c06edafaac1d873aa3a538cc8c8d49769b4a26696a53adfb11c2290a0be4';
+const PKEY='naeem-people-v2',PHASH='0270f42ecbcc3f25e662c936ca67f37e5af2105360dbc81d6ec8f01a20e3344a';
 const blankCH=()=>({added:[],edits:{},del:[]});
 function loadCH(){try{const v=JSON.parse(localStorage.getItem(PKEY)||'null');if(v&&typeof v==='object')return{added:Array.isArray(v.added)?v.added:[],edits:v.edits&&typeof v.edits==='object'?v.edits:{},del:Array.isArray(v.del)?v.del:[]};
   const old=JSON.parse(localStorage.getItem('naeem-people-added')||'[]');const c=blankCH();if(Array.isArray(old))c.added=old.filter(x=>x&&x.n&&x.c);return c}catch(e){return blankCH()}}
