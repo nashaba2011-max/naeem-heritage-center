@@ -385,8 +385,10 @@ p{margin:0}
 .inv .wadel{all:unset;cursor:pointer;color:var(--fg-3);padding:4px 8px;border-radius:7px;font-size:.85rem}
 .inv .wadel:hover{color:var(--fg);background:var(--line)}
 .inv .wadel:focus-visible,.inv .wasend:focus-visible,.inv .walinks a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-.inv .wadd{display:flex;gap:8px;margin-top:12px}
+.inv .wadd{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .inv .wadd input{direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+.inv .wadd input#waName{direction:rtl;text-align:right;font-variant-numeric:normal;flex:1 1 40%}
+.inv .wadd input#waNum{flex:1 1 40%}
 .inv .wadd .pbtn{flex:none}
 .inv .waerr{min-height:1.3em;margin:6px 2px 0;color:#8A4B22}
 .inv .wasend{box-sizing:border-box;width:100%;justify-content:center;margin-top:10px;background:#C9A27A;color:#2B1A0E;border-color:transparent}
@@ -759,7 +761,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
     <div class="wabh"><span class="wabt">أرقام واتساب للإرسال</span><span class="wacnt" id="waCnt" aria-live="polite"></span></div>
     <label class="waall"><input type="checkbox" id="waAll"> تحديد الكل</label>
     <div class="walist" id="waList"></div>
-    <div class="wadd"><input id="waNum" inputmode="tel" placeholder="مثال: 3300 1234" aria-label="رقم واتساب جديد"><button type="button" class="pbtn" id="waAdd">إضافة</button></div>
+    <div class="wadd"><input id="waName" placeholder="اسم المرسل إليه" aria-label="اسم المرسل إليه" autocomplete="off" maxlength="80"><input id="waNum" inputmode="tel" placeholder="مثال: 3300 1234" aria-label="رقم واتساب جديد"><button type="button" class="pbtn" id="waAdd">إضافة</button></div>
     <p class="invh waerr" id="waErr" role="alert"></p>
     <button type="button" class="pbtn wasend" id="waSend" aria-disabled="true">إرسال الدعوة عبر واتساب</button>
     <div class="walinks" id="waLinks" hidden></div>
@@ -776,7 +778,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
       list.forEach(x=>{
         const row=document.createElement('div'); row.className='warow';
         const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=sel.has(x.id); cb.id='wa'+x.id;
-        const lb=document.createElement('label'); lb.htmlFor=cb.id; lb.className='walab'; lb.textContent=fmt(x.n);
+        const lb=document.createElement('label'); lb.htmlFor=cb.id; lb.className='walab'; lb.textContent=(x.name?x.name+' · ':'')+fmt(x.n);
         const del=document.createElement('button'); del.type='button'; del.className='wadel'; del.textContent='حذف'; del.setAttribute('aria-label','حذف الرقم '+fmt(x.n));
         del.onclick=()=>{const i=list.indexOf(x);if(i>-1)list.splice(i,1);sel.delete(x.id);render()};
         cb.onchange=()=>{cb.checked?sel.add(x.id):sel.delete(x.id);render()};
@@ -790,19 +792,19 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
     }
     $('waAll').addEventListener('change',()=>{sel.clear();if($('waAll').checked)list.forEach(x=>sel.add(x.id));render()});
     function add(){
-      const d=norm($('waNum').value), err=$('waErr');
+      const d=norm($('waNum').value), err=$('waErr'), nm=$('waName').value.trim();
+      if(!nm){err.textContent='اكتب اسم المرسل إليه.';return}
       if(!/^973\d{8}$/.test(d)){err.textContent='اكتب رقماً بحرينياً من 8 أرقام، مثل 3300 1234.';return}
       if(list.some(x=>norm(x.n)===d)){err.textContent='هذا الرقم مُضاف مسبقاً.';return}
-      const x={id:seq++,n:d.slice(3)}; list.push(x); sel.add(x.id);
-      $('waNum').value=''; err.textContent=''; render();
+      const x={id:seq++,n:d.slice(3),name:nm}; list.push(x); sel.add(x.id);
+      $('waNum').value=''; $('waName').value=''; err.textContent=''; render();
     }
     $('waAdd').addEventListener('click',add);
     $('waNum').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();add()}});
     $('waSend').addEventListener('click',()=>{
       if($('waSend').getAttribute('aria-disabled')==='true')return;
-      const t=encodeURIComponent(INVITE);
       const box=$('waLinks');
-      box.innerHTML=list.filter(x=>sel.has(x.id)).map(x=>'<a href="https://wa.me/'+CC+x.n+'?text='+t+'" target="_blank" rel="noopener"><span>فتح واتساب</span>'+fmt(x.n)+'</a>').join('');
+      box.innerHTML=list.filter(x=>sel.has(x.id)).map(x=>{const t=encodeURIComponent('الأخ الفاضل '+x.name+'\n\n'+INVITE);return '<a href="https://wa.me/'+CC+x.n+'?text='+t+'" target="_blank" rel="noopener"><span>فتح واتساب</span>'+x.name+' · '+fmt(x.n)+'</a>'}).join('');
       box.hidden=false;
     });
     render();
