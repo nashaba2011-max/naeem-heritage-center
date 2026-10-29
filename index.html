@@ -796,6 +796,42 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
     render();
   })();
   </script>
+  <div class="wab" id="mailBox">
+    <div class="wabh"><span class="wabt">إرسال الدعوة بالبريد</span></div>
+    <div class="wadd"><input id="mailTo" type="email" inputmode="email" placeholder="name@example.com" autocomplete="off" aria-label="البريد الإلكتروني للمدعو"><button type="button" class="pbtn" id="mailSend">فتح البريد</button></div>
+    <p class="invh waerr" id="mailErr" role="alert"></p>
+    <p class="invh">يفتح تطبيق البريد برسالة جاهزة بالبيانات أعلاه، ويمكنك إرفاق ملف PDF يدوياً.</p>
+  </div>
+  <script>
+  (function(){
+    const $=s=>document.getElementById(s);
+    $('mailSend').addEventListener('click',()=>{
+      const to=$('mailTo').value.trim(), err=$('mailErr');
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)){err.textContent='اكتب بريداً إلكترونياً صحيحاً.';return}
+      const name=$('invName').value||'';
+      const spon=$('invSpon').value||'';
+      const when=$('invWhenTxt').value||'';
+      const tf=$('invTf').value||'', tt=$('invTt').value||'';
+      const apf=$('invApF').textContent||'', apt=$('invApT').textContent||'';
+      const where=$('invWhere').value||'';
+      const subject='دعوة لحضور المؤتمر التأسيسي لمشروع مركز النعيم الثقافي والتراثي';
+      const body=[
+        'بسم الله الرحمن الرحيم',
+        '',
+        name?('الأخ الفاضل: '+name):'',
+        '',
+        'دعوة لحضور المؤتمر التأسيسي لمشروع مركز النعيم الثقافي والتراثي.',
+        spon?('وقد حظيت فكرة المشروع بموافقة ('+spon+') على تبنيها ورعايتها.'):'',
+        when?('موعد الاجتماع: '+when+(tf?(' من '+tf+' '+apf):'')+(tt?(' إلى '+tt+' '+apt):'')):'',
+        where?('المكان: '+where):'',
+        '',
+        'وتفضلوا بقبول فائق الاحترام والتقدير،،،'
+      ].filter((l,i,a)=>l!==''||(i>0&&a[i-1]!=='')).join('\n');
+      err.textContent='';
+      window.location.href='mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+    });
+  })();
+  </script>
   <div class="invb"><button type="button" class="pbtn" id="invPdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>حفظ الدعوة PDF</button><p class="invh" id="invHint">في نافذة الطباعة اختر «حفظ كـ PDF».</p></div>
 </div>
 
