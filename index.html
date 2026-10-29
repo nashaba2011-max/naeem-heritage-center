@@ -408,6 +408,17 @@ p{margin:0}
 .inv .wab .invh{margin:8px 0 0}
 .inv .wasend{min-height:46px;margin-top:12px;border-radius:10px;padding:0 20px}
 .inv .walinks{margin-top:12px}
+.inv .rcpq{display:block;width:100%;box-sizing:border-box;min-height:44px;margin:0 0 10px;padding:0 12px;direction:rtl;text-align:right}
+.inv .rcpitem{display:flex;align-items:center;gap:10px;padding:8px 2px;border-radius:8px;cursor:pointer;color:var(--fg);font-weight:500}
+.inv .rcpitem:hover{background:var(--bg-2)}
+.inv .rcpitem input{width:18px;height:18px;margin:0;accent-color:#C9A27A;cursor:pointer;flex:none}
+.inv .rcprow{display:grid;grid-template-columns:minmax(90px,1fr) 1.2fr 1.4fr auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.inv .rcprow .rcpn{font-weight:600;color:var(--fg);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inv .rcprow input{box-sizing:border-box;min-height:44px;padding:0 10px;direction:ltr;text-align:right;font-size:.95rem;min-width:0}
+.inv .rcprow .wadel{min-height:44px;padding:0 10px;border:1px solid var(--line);border-radius:10px}
+#rcpMail{width:100%;justify-content:center;margin-top:10px;box-sizing:border-box;min-height:46px;border-radius:10px}
+@media (max-width:560px){.inv .rcprow{grid-template-columns:1fr 1fr}.inv .rcprow .rcpn{grid-column:1/-1}}
+
 .inv .walinks a{min-height:44px;box-sizing:border-box;border-radius:10px}
 
 @media print{
@@ -757,93 +768,99 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
     <div class="invw invt2"><label>الوقت من<span class="dwrap tw"><input id="invTf" class="hm" inputmode="numeric" placeholder="10.30" maxlength="5" autocomplete="off"><span class="dcal dico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><button type="button" class="dap" id="invApF" aria-label="تبديل صباحاً أو مساءً">صباحاً</button><input type="hidden" id="invApFV" value=""></span></label><label>إلى<span class="dwrap tw"><input id="invTt" class="hm" inputmode="numeric" placeholder="11.30" maxlength="5" autocomplete="off"><span class="dcal dico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><button type="button" class="dap" id="invApT" aria-label="تبديل صباحاً أو مساءً">صباحاً</button><input type="hidden" id="invApTV" value=""></span></label></div>
     <label class="invw">المكان<input id="invWhere"></label>
   </div>
-  <div class="wab" id="waBox">
-    <div class="wabh"><span class="wabt">أرقام واتساب للإرسال</span><span class="wacnt" id="waCnt" aria-live="polite"></span></div>
-    <label class="waall"><input type="checkbox" id="waAll"> تحديد الكل</label>
-    <div class="walist" id="waList"></div>
-    <div class="wadd"><input id="waName" placeholder="اسم المرسل إليه" aria-label="اسم المرسل إليه" autocomplete="off" maxlength="80"><input id="waNum" inputmode="tel" placeholder="مثال: 3300 1234" aria-label="رقم واتساب جديد"><button type="button" class="pbtn" id="waAdd">إضافة</button></div>
-    <p class="invh waerr" id="waErr" role="alert"></p>
-    <button type="button" class="pbtn wasend" id="waSend" aria-disabled="true">إرسال الدعوة عبر واتساب</button>
-    <div class="walinks" id="waLinks" hidden></div>
+  <div class="wab" id="rcpBox">
+    <div class="wabh"><span class="wabt">المستلمون من قائمة الشخصيات</span><span class="wacnt" id="rcpCnt" aria-live="polite"></span></div>
+    <input class="rcpq" id="rcpQ" type="search" placeholder="ابحث باسم الشخصية" aria-label="بحث في قائمة الشخصيات" autocomplete="off">
+    <label class="waall"><input type="checkbox" id="rcpAll"> تحديد الكل</label>
+    <div class="walist" id="rcpList"></div>
+    <div class="wabh" style="margin-top:16px"><span class="wabt">الواتساب والبريد لكل شخص</span></div>
+    <div id="rcpRows"></div>
+    <p class="invh">أدخل الرقم أو البريد لكل شخص محدد. الإرسال يشمل من أدخلت بياناته فقط.</p>
+    <button type="button" class="pbtn wasend" id="rcpWa" aria-disabled="true">إرسال الدعوة عبر واتساب</button>
+    <div class="walinks" id="rcpLinks" hidden></div>
+    <button type="button" class="pbtn" id="rcpMail" aria-disabled="true">إرسال الدعوة بالبريد</button>
+    <p class="invh waerr" id="rcpErr" role="alert"></p>
   </div>
   <script>
   (function(){
-    const CC='973', INVITE='دعوة لحضور المؤتمر التأسيسي لمشروع مركز النعيم الثقافي والتراثي';
+    const CC='973';
+    const INVITE='دعوة لحضور المؤتمر التأسيسي لمشروع مركز النعيم الثقافي والتراثي.';
     const $=s=>document.getElementById(s);
-    const list=[], sel=new Set(); let seq=1;
+    const picked=new Set(), contact={};
     const fmt=n=>n.replace(/(\d{4})(\d{4})/,'$1 $2');
-    const norm=raw=>{let d=raw.replace(/\D/g,'');if(d.startsWith('00'))d=d.slice(2);if(d.length===8)d=CC+d;return d};
-    function render(){
-      const box=$('waList'); box.innerHTML='';
-      list.forEach(x=>{
-        const row=document.createElement('div'); row.className='warow';
-        const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=sel.has(x.id); cb.id='wa'+x.id;
-        const lb=document.createElement('label'); lb.htmlFor=cb.id; lb.className='walab'; lb.textContent=(x.name?x.name+' · ':'')+fmt(x.n);
-        const del=document.createElement('button'); del.type='button'; del.className='wadel'; del.textContent='حذف'; del.setAttribute('aria-label','حذف الرقم '+fmt(x.n));
-        del.onclick=()=>{const i=list.indexOf(x);if(i>-1)list.splice(i,1);sel.delete(x.id);render()};
-        cb.onchange=()=>{cb.checked?sel.add(x.id):sel.delete(x.id);render()};
-        row.append(cb,lb,del); box.appendChild(row);
+    const normWa=raw=>{let d=String(raw||'').replace(/\D/g,'');if(d.startsWith('00'))d=d.slice(2);if(d.length===8)d=CC+d;return d};
+    const validWa=d=>/^973\d{8}$/.test(d);
+    const validEm=e=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+    const people=()=>{const out=[];if(typeof ALL==='undefined')return out;ALL.forEach(g=>g.p.forEach(p=>out.push({key:p.key,n:p.n})));return out};
+    const lines=()=>{
+      const L=[],sp=$('invSpon').value.trim(),when=$('invWhenTxt').value.trim(),tf=$('invTf').value.trim(),tt=$('invTt').value.trim(),where=$('invWhere').value.trim();
+      const apf=$('invApF').textContent||'',apt=$('invApT').textContent||'';
+      if(sp)L.push('وقد حظيت فكرة المشروع بموافقة ('+sp+') على تبنيها ورعايتها.');
+      if(when)L.push('موعد الاجتماع: '+when+(tf?' من '+tf+' '+apf:'')+(tt?' إلى '+tt+' '+apt:''));
+      if(where)L.push('المكان: '+where);
+      return L;
+    };
+    const greet=n=>(typeof isHer==='function'&&isHer(n)?'الأخت الكريمة / ':'الأخ الكريم / ')+n+' المحترم،،';
+    const bodyFor=n=>[greet(n),'',INVITE,...lines(),'','وتفضلوا بقبول فائق الاحترام والتقدير،،،'].join('\n');
+
+    function renderList(){
+      const q=$('rcpQ').value.trim(), box=$('rcpList');
+      box.innerHTML='';
+      people().filter(x=>!q||x.n.includes(q)).forEach(x=>{
+        const row=document.createElement('label'); row.className='rcpitem';
+        const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=picked.has(x.key); cb.dataset.k=x.key;
+        const sp=document.createElement('span'); sp.textContent=x.n;
+        row.append(cb,sp); box.appendChild(row);
       });
-      const k=sel.size,t=list.length;
-      $('waCnt').textContent=t?k+' من '+t+' محدد':'لا توجد أرقام بعد';
-      $('waAll').checked=t>0&&k===t; $('waAll').indeterminate=k>0&&k<t;
-      $('waSend').setAttribute('aria-disabled',String(k===0));
-      $('waLinks').hidden=true; $('waLinks').innerHTML='';
     }
-    $('waAll').addEventListener('change',()=>{sel.clear();if($('waAll').checked)list.forEach(x=>sel.add(x.id));render()});
-    function add(){
-      const d=norm($('waNum').value), err=$('waErr'), nm=$('waName').value.trim();
-      if(!nm){err.textContent='اكتب اسم المرسل إليه.';return}
-      if(!/^973\d{8}$/.test(d)){err.textContent='اكتب رقماً بحرينياً من 8 أرقام، مثل 3300 1234.';return}
-      if(list.some(x=>norm(x.n)===d)){err.textContent='هذا الرقم مُضاف مسبقاً.';return}
-      const x={id:seq++,n:d.slice(3),name:nm}; list.push(x); sel.add(x.id);
-      $('waNum').value=''; $('waName').value=''; err.textContent=''; render();
+    function renderRows(){
+      const box=$('rcpRows'); box.innerHTML='';
+      people().filter(x=>picked.has(x.key)).forEach(x=>{
+        const c=contact[x.key]||(contact[x.key]={wa:'',em:''});
+        const r=document.createElement('div'); r.className='rcprow';
+        const nm=document.createElement('span'); nm.className='rcpn'; nm.textContent=x.n;
+        const wa=document.createElement('input'); wa.inputMode='tel'; wa.placeholder='واتساب: 3300 1234'; wa.setAttribute('aria-label','واتساب '+x.n); wa.value=c.wa; wa.dataset.k=x.key; wa.dataset.f='wa';
+        const em=document.createElement('input'); em.type='email'; em.inputMode='email'; em.placeholder='بريد: name@mail.com'; em.setAttribute('aria-label','بريد '+x.n); em.value=c.em; em.dataset.k=x.key; em.dataset.f='em';
+        const rm=document.createElement('button'); rm.type='button'; rm.className='wadel'; rm.textContent='إزالة'; rm.dataset.k=x.key; rm.setAttribute('aria-label','إزالة '+x.n);
+        r.append(nm,wa,em,rm); box.appendChild(r);
+      });
+      summary();
     }
-    $('waAdd').addEventListener('click',add);
-    $('waNum').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();add()}});
-    $('waSend').addEventListener('click',()=>{
-      if($('waSend').getAttribute('aria-disabled')==='true')return;
-      const box=$('waLinks');
-      box.innerHTML=list.filter(x=>sel.has(x.id)).map(x=>{const t=encodeURIComponent('الأخ الفاضل '+x.name+'\n\n'+INVITE);return '<a href="https://wa.me/'+CC+x.n+'?text='+t+'" target="_blank" rel="noopener"><span>فتح واتساب</span>'+x.name+' · '+fmt(x.n)+'</a>'}).join('');
-      box.hidden=false;
+    function summary(){
+      const ps=people().filter(x=>picked.has(x.key));
+      const waN=ps.filter(x=>validWa(normWa((contact[x.key]||{}).wa))).length;
+      const emN=ps.filter(x=>validEm(((contact[x.key]||{}).em||'').trim())).length;
+      $('rcpCnt').textContent=ps.length?(ps.length+' محدد · واتساب: '+waN+' · بريد: '+emN):'لم يُحدد أحد';
+      $('rcpWa').setAttribute('aria-disabled',String(!waN));
+      $('rcpMail').setAttribute('aria-disabled',String(!emN));
+      const total=people().length;
+      $('rcpAll').checked=total>0&&picked.size===total;
+      $('rcpAll').indeterminate=picked.size>0&&picked.size<total;
+      $('rcpLinks').hidden=true; $('rcpLinks').innerHTML='';
+    }
+
+    $('rcpQ').addEventListener('input',renderList);
+    $('rcpList').addEventListener('change',e=>{const k=e.target.dataset.k;if(!k)return;e.target.checked?picked.add(k):picked.delete(k);renderRows();renderList();});
+    $('rcpAll').addEventListener('change',()=>{picked.clear();if($('rcpAll').checked)people().forEach(x=>picked.add(x.key));renderList();renderRows();});
+    $('rcpRows').addEventListener('input',e=>{const k=e.target.dataset.k,f=e.target.dataset.f;if(!k)return;contact[k]=contact[k]||{wa:'',em:''};contact[k][f]=e.target.value;summary();});
+    $('rcpRows').addEventListener('click',e=>{const b=e.target.closest('.wadel');if(!b)return;picked.delete(b.dataset.k);renderList();renderRows();});
+
+    $('rcpWa').addEventListener('click',()=>{
+      if($('rcpWa').getAttribute('aria-disabled')==='true')return;
+      const ps=people().filter(x=>picked.has(x.key)&&validWa(normWa((contact[x.key]||{}).wa)));
+      $('rcpLinks').innerHTML=ps.map(x=>{const w=normWa(contact[x.key].wa);return '<a href="https://wa.me/'+w+'?text='+encodeURIComponent(bodyFor(x.n))+'" target="_blank" rel="noopener"><span>فتح واتساب</span>'+esc(x.n)+' · '+fmt(w.slice(3))+'</a>'}).join('');
+      $('rcpLinks').hidden=false;
     });
-    render();
-  })();
-  </script>
-  <div class="wab" id="mailBox">
-    <div class="wabh"><span class="wabt">إرسال الدعوة بالبريد</span></div>
-    <div class="wadd"><input id="mailTo" type="email" inputmode="email" placeholder="name@example.com" autocomplete="off" aria-label="البريد الإلكتروني للمدعو"><button type="button" class="pbtn" id="mailSend">فتح البريد</button></div>
-    <p class="invh waerr" id="mailErr" role="alert"></p>
-    <p class="invh">يفتح تطبيق البريد برسالة جاهزة بالبيانات أعلاه، ويمكنك إرفاق ملف PDF يدوياً.</p>
-  </div>
-  <script>
-  (function(){
-    const $=s=>document.getElementById(s);
-    $('mailSend').addEventListener('click',()=>{
-      const to=$('mailTo').value.trim(), err=$('mailErr');
-      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)){err.textContent='اكتب بريداً إلكترونياً صحيحاً.';return}
-      const name=$('invName').value||'';
-      const spon=$('invSpon').value||'';
-      const when=$('invWhenTxt').value||'';
-      const tf=$('invTf').value||'', tt=$('invTt').value||'';
-      const apf=$('invApF').textContent||'', apt=$('invApT').textContent||'';
-      const where=$('invWhere').value||'';
+
+    $('rcpMail').addEventListener('click',()=>{
+      if($('rcpMail').getAttribute('aria-disabled')==='true')return;
+      const ems=people().filter(x=>picked.has(x.key)).map(x=>((contact[x.key]||{}).em||'').trim()).filter(validEm);
       const subject='دعوة لحضور المؤتمر التأسيسي لمشروع مركز النعيم الثقافي والتراثي';
-      const body=[
-        'بسم الله الرحمن الرحيم',
-        '',
-        name?('الأخ الفاضل: '+name):'',
-        '',
-        'دعوة لحضور المؤتمر التأسيسي لمشروع مركز النعيم الثقافي والتراثي.',
-        spon?('وقد حظيت فكرة المشروع بموافقة ('+spon+') على تبنيها ورعايتها.'):'',
-        when?('موعد الاجتماع: '+when+(tf?(' من '+tf+' '+apf):'')+(tt?(' إلى '+tt+' '+apt):'')):'',
-        where?('المكان: '+where):'',
-        '',
-        'وتفضلوا بقبول فائق الاحترام والتقدير،،،'
-      ].filter((l,i,a)=>l!==''||(i>0&&a[i-1]!=='')).join('\n');
-      err.textContent='';
-      window.location.href='mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+      const body=['بسم الله الرحمن الرحيم','','الأخوة الكرام،،',INVITE,...lines(),'','وتفضلوا بقبول فائق الاحترام والتقدير،،،'].join('\n');
+      window.location.href='mailto:?bcc='+encodeURIComponent(ems.join(','))+'&subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
     });
+
+    window.addEventListener('load',()=>{renderList();renderRows();});
   })();
   </script>
   <div class="invb"><button type="button" class="pbtn" id="invPdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>حفظ الدعوة PDF</button><p class="invh" id="invHint">في نافذة الطباعة اختر «حفظ كـ PDF».</p></div>
