@@ -396,6 +396,18 @@ p{margin:0}
 .inv .walinks a span{direction:rtl;color:#6B3E1E;font-weight:700}
 .inv .walinks a:hover{outline:1px solid #C9A27A}
 [data-theme="dark"] .inv .walinks a span,:root:not([data-theme="light"]) .inv .walinks a span{color:#E0AC5C}
+/* consistent spacing for both WhatsApp and email boxes */
+.inv .wab{margin:18px 0 0;padding:18px;box-sizing:border-box}
+.inv .wab .wabh{min-height:28px;margin-bottom:10px}
+.inv .wab .pbtn{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 20px;border-radius:10px;font-size:1rem;line-height:1}
+.inv .wadd{align-items:stretch;margin-top:12px}
+.inv .wadd input{box-sizing:border-box;min-height:44px;padding:0 12px;border-radius:10px}
+.inv .waerr{margin:8px 0 0;min-height:1.2em}
+.inv .wab .invh{margin:8px 0 0}
+.inv .wasend{min-height:46px;margin-top:12px;border-radius:10px;padding:0 20px}
+.inv .walinks{margin-top:12px}
+.inv .walinks a{min-height:44px;box-sizing:border-box;border-radius:10px}
+
 @media print{
   html.printing #prt.letter{font-size:12pt}
   #prt.letter .lframe{display:block;position:fixed;inset:0;width:100%;height:100%;object-fit:fill;z-index:-1}
