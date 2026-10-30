@@ -408,6 +408,9 @@ p{margin:0}
 .inv .wab .invh{margin:8px 0 0}
 .inv .wasend{min-height:46px;margin-top:12px;border-radius:10px;padding:0 20px}
 .inv .walinks{margin-top:12px}
+.inv .invrow{display:grid;grid-template-columns:1.4fr 1fr;gap:12px}
+.inv .invrow>label{min-width:0}
+@media (max-width:560px){.inv .invrow{grid-template-columns:1fr}}
 .inv .rcpq{display:block;width:100%;box-sizing:border-box;min-height:44px;margin:0 0 10px;padding:0 12px;direction:rtl;text-align:right}
 .inv .rcpitem{display:flex;align-items:center;gap:10px;padding:8px 2px;border-radius:8px;cursor:pointer;color:var(--fg);font-weight:500}
 .inv .rcpitem:hover{background:var(--bg-2)}
@@ -760,7 +763,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
 <div class="invlock" id="invLock"><p>تجهيز الدعوة وحفظها PDF خاص بالمشرف.</p><button type="button" class="pbtn" id="invOpen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>دخول المشرف لتجهيز الدعوة</button></div>
 <div class="inv" id="inv" hidden>
   <p class="invt">جهّز الدعوة لشخصية محددة</p>
-  <label class="invw">اسم المدعو<select id="invName"><option value="">اختر من قائمة الشخصيات…</option></select></label>
+  <div class="invw invrow"><label>اسم المدعو<select id="invName"><option value="">اختر من قائمة الشخصيات…</option></select></label><label>رقم التلفون (واتساب)<input id="invPhone" type="tel" inputmode="tel" placeholder="3300 1234" autocomplete="off" aria-label="رقم التلفون للمدعو"></label></div>
   <label class="invw">الجهة التي وافقت على تبنّي المشروع ورعايته<input id="invSpon" placeholder="مثال: مركز تمكين شباب النعيم"><span class="invx">تُكتب في: «وقد حظيت فكرة المشروع بموافقة (…) على تبنيها ورعايتها»</span></label>
   <div class="invg">
     <label class="invw">بالتنسيق مع<input id="invCo"></label>
@@ -842,7 +845,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
     $('rcpQ').addEventListener('input',renderList);
     $('rcpList').addEventListener('change',e=>{const k=e.target.dataset.k;if(!k)return;e.target.checked?picked.add(k):picked.delete(k);renderRows();renderList();});
     $('rcpAll').addEventListener('change',()=>{picked.clear();if($('rcpAll').checked)people().forEach(x=>picked.add(x.key));renderList();renderRows();});
-    $('rcpRows').addEventListener('input',e=>{const k=e.target.dataset.k,f=e.target.dataset.f;if(!k)return;contact[k]=contact[k]||{wa:'',em:''};contact[k][f]=e.target.value;summary();});
+    $('rcpRows').addEventListener('input',e=>{const k=e.target.dataset.k,f=e.target.dataset.f;if(!k)return;contact[k]=contact[k]||{wa:'',em:''};contact[k][f]=e.target.value;if(f==='wa'&&k===$('invName').value)$('invPhone').value=e.target.value;summary();});
     $('rcpRows').addEventListener('click',e=>{const b=e.target.closest('.wadel');if(!b)return;picked.delete(b.dataset.k);renderList();renderRows();});
 
     $('rcpWa').addEventListener('click',()=>{
@@ -860,7 +863,11 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
       window.location.href='mailto:?bcc='+encodeURIComponent(ems.join(','))+'&subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
     });
 
-    $('invName').addEventListener('change',()=>{const k=$('invName').value;if(!k)return;picked.add(k);renderList();renderRows();});
+    const ph=$('invPhone');
+    const curK=()=>$('invName').value;
+    const syncRowWa=(k,v)=>{const inp=document.querySelector('#rcpRows input[data-k="'+k+'"][data-f="wa"]');if(inp&&inp!==document.activeElement)inp.value=v};
+    $('invName').addEventListener('change',()=>{const k=curK();if(!k)return;picked.add(k);renderList();renderRows();ph.value=(contact[k]||{}).wa||'';});
+    ph.addEventListener('input',()=>{const k=curK();if(!k)return;contact[k]=contact[k]||{wa:'',em:''};contact[k].wa=ph.value;syncRowWa(k,ph.value);summary();});
     window.addEventListener('load',()=>{renderList();renderRows();});
   })();
   </script>
