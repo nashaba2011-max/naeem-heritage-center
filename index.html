@@ -791,10 +791,11 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
     const $=s=>document.getElementById(s);
     const picked=new Set(), contact={};
     const fmt=n=>n.replace(/(\d{4})(\d{4})/,'$1 $2');
+    const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const normWa=raw=>{let d=String(raw||'').replace(/\D/g,'');if(d.startsWith('00'))d=d.slice(2);if(d.length===8)d=CC+d;return d};
     const validWa=d=>/^973\d{8}$/.test(d);
     const validEm=e=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
-    const people=()=>{const out=[];if(typeof ALL==='undefined')return out;ALL.forEach(g=>g.p.forEach(p=>out.push({key:p.key,n:p.n})));return out};
+    const people=()=>{const sel=$('invName');if(sel.options.length<2&&window.fillInvName)window.fillInvName();return [...sel.options].filter(o=>o.value).map(o=>({key:o.value,n:o.textContent}))};
     const lines=()=>{
       const L=[],sp=$('invSpon').value.trim(),when=$('invWhenTxt').value.trim(),tf=$('invTf').value.trim(),tt=$('invTt').value.trim(),where=$('invWhere').value.trim();
       const apf=$('invApF').textContent||'',apt=$('invApT').textContent||'';
@@ -812,7 +813,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
       people().filter(x=>!q||x.n.includes(q)).forEach(x=>{
         const row=document.createElement('label'); row.className='rcpitem';
         const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=picked.has(x.key); cb.dataset.k=x.key;
-        const sp=document.createElement('span'); sp.textContent=x.n;
+        const sp=document.createElement('span'); const wv=(contact[x.key]||{}).wa; sp.textContent=x.n+(wv?' · '+wv:'');
         row.append(cb,sp); box.appendChild(row);
       });
     }
@@ -866,8 +867,13 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--fg-3);fon
     const ph=$('invPhone');
     const curK=()=>$('invName').value;
     const syncRowWa=(k,v)=>{const inp=document.querySelector('#rcpRows input[data-k="'+k+'"][data-f="wa"]');if(inp&&inp!==document.activeElement)inp.value=v};
-    $('invName').addEventListener('change',()=>{const k=curK();if(!k)return;picked.add(k);renderList();renderRows();ph.value=(contact[k]||{}).wa||'';});
-    ph.addEventListener('input',()=>{const k=curK();if(!k)return;contact[k]=contact[k]||{wa:'',em:''};contact[k].wa=ph.value;syncRowWa(k,ph.value);summary();});
+    const refresh=()=>{renderList();renderRows();};
+    const pickFromDropdown=()=>{const k=curK();if(!k)return;picked.add(k);ph.value=(contact[k]||{}).wa||'';refresh();};
+    $('invName').addEventListener('change',()=>{pickFromDropdown();setTimeout(refresh,0);});
+    $('invName').addEventListener('input',pickFromDropdown);
+    ['focus','pointerdown'].forEach(ev=>$('invName').addEventListener(ev,()=>setTimeout(refresh,0)));
+    setTimeout(refresh,600);
+    ph.addEventListener('input',()=>{const k=curK();if(!k)return;contact[k]=contact[k]||{wa:'',em:''};contact[k].wa=ph.value;syncRowWa(k,ph.value);renderList();summary();});
     window.addEventListener('load',()=>{renderList();renderRows();});
   })();
   </script>
@@ -1251,7 +1257,7 @@ if(G){
   art.querySelector('.lwhen').textContent=F.when.value?fmtD(F.when.value,1):dots;$('#invWhenTx').textContent=F.when.value?fmtD(F.when.value,1).split(' ')[0]:'';$('#invApF').textContent=apOf('f');$('#invApT').textContent=apOf('t');$('#invApF').hidden=!F.tf.value;$('#invApT').hidden=!F.tt.value;const tm=fmtT();art.querySelector('.ltime').textContent=tm||dots;art.querySelector('.lwhere').textContent=val('where',dots);
   $('#invPdf').setAttribute('aria-disabled',String(!p))}
  [['.lspon','spon'],['.lco','co'],['.lwhen','when'],['.ltime','tf'],['.lwhere','where']].forEach(([c,k])=>art.querySelector(c).addEventListener('click',()=>{if(!unlocked())return;if(k==='when'){wt.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>wt.focus({preventScroll:true}),350);return}F[k].scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>F[k].focus({preventScroll:true}),350)}));
- sel.addEventListener('focus',fill);sel.addEventListener('pointerdown',fill);sel.addEventListener('change',sync);
+ sel.addEventListener('focus',fill);sel.addEventListener('pointerdown',fill);sel.addEventListener('change',sync);window.fillInvName=fill;
  Object.values(F).forEach(i=>{i.addEventListener('input',()=>{sync();save()});i.addEventListener('change',()=>{sync();save()})});
 
  const wt=$('#invWhenTxt');const toTxt=v=>{const m=v.match(/^(\d{4})-(\d\d)-(\d\d)/);return m?`${m[3]}.${m[2]}.${m[1]}`:''};
